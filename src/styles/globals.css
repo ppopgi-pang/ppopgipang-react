@@ -1,0 +1,542 @@
+@import 'tailwindcss';
+
+/* ============================================
+   폰트 정의
+   ============================================ */
+@font-face {
+    font-family: 'Pretendard';
+    src: url('/src/assets/fonts/PretendardVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+/* ============================================
+   Tailwind Theme 변수
+   ============================================ */
+@theme {
+    /* ==========================================
+     1. Text Colors (Figma에서 가져온 그레이스케일)
+     ========================================== */
+    --color-text-black: #222124;
+    --color-text-primary: #333333; /* gray900 */
+    --color-text-secondary: #b0b0b0; /* gray500 */
+    --color-text-white: #ffffff;
+
+    --color-gray-900: #333333;
+    --color-gray-800: #494949;
+    --color-gray-700: #5a5a5a;
+    --color-gray-600: #6d6d6d;
+    --color-gray-500: #b0b0b0;
+    --color-gray-400: #c6c6c6;
+    --color-gray-300: #dcdcdc;
+    --color-gray-200: #f2f2f2;
+    --color-gray-100: #f8f8f8;
+
+    /* ==========================================
+     2. Background Colors (Figma Background)
+     ========================================== */
+    --color-bg-primary: #fff7f9;
+    --color-bg-surface: #e9d6dc;
+    --color-bg-elevated: #fdecee;
+
+    --color-divider-primary: #ff6f91;
+    --color-divider-secondary: #f2c6d0;
+    --color-divider-tertiary: #eadde1;
+
+    /* ==========================================
+     3. Brand Colors (Figma Brand)
+     ========================================== */
+    --color-brand-main1-dark: #ff6f91;
+    --color-brand-main1: #ff85a2;
+    --color-brand-main1-light: #fff7f9;
+
+    --color-brand-main2: #6ec6e8;
+    --color-brand-main2-light: #8ed6ee;
+
+    --color-brand-main3: #ffd93d;
+    --color-brand-main3-light: #ffe066;
+
+    --color-brand-main4: #5ed3b6;
+
+    /* ==========================================
+     4. Status Colors (Figma Status)
+     ========================================== */
+    --color-status-success: #4caf50;
+    --color-status-warning: #ff9800;
+    --color-status-error: #ff5252;
+
+    /* ==========================================
+     5. Map Colors (Figma Map)
+     ========================================== */
+    --color-map-default: #ff6f91;
+    --color-map-selected: #ffd93d;
+    --color-map-favorite: #5ed3b6;
+
+    /* ==========================================
+     6. 폰트 패밀리
+     ========================================== */
+    --font-pretendard: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+
+    /* ==========================================
+     7. Typography Scale (Figma 토큰 기반)
+     ========================================== */
+    /* Font Sizes */
+    --text-xs: 14px;
+    --text-sm: 16px;
+    --text-base: 18px;
+    --text-lg: 20px;
+    --text-xl: 24px;
+    --text-2xl: 28px;
+    --text-3xl: 30px;
+    --text-4xl: 38px;
+
+    /* Line Heights - Figma 고정값 (디자인 시스템 일관성 유지) */
+    --leading-tight: 24px;
+    --leading-snug: 28px;
+    --leading-normal: 32px;
+    --leading-relaxed: 36px;
+    --leading-loose: 40px;
+    --leading-extra: 48px;
+
+    /* ==========================================
+     8. 애니메이션
+     ========================================== */
+    --animate-slide-in-right: slide-in-right 0.3s ease-out;
+    --animate-fade-in: fade-in 0.2s ease-out;
+    --animate-scale-up: scale-up 0.2s ease-out;
+}
+
+/* ============================================
+   애니메이션 키프레임
+   ============================================ */
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scale-up {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   CSS 커스텀 속성 (Root Variables)
+   ============================================ */
+:root {
+    /* Layout Dimensions */
+    --header-height: 68px;
+    --bottom-nav-height: 72px;
+    --page-safe-bottom: calc(var(--bottom-nav-height) + 18px);
+    --app-max-width: 480px;
+
+    /* Glass Morphism Effects */
+    --glass-bg: rgba(255, 255, 255, 0.58);
+    --glass-bg-strong: rgba(255, 255, 255, 0.78);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+
+    /* Gradients - Figma 토큰 기반 */
+    --gradient-background: linear-gradient(244deg, #fff7f9 0%, #ffffff 100%);
+    --gradient-brand: linear-gradient(135deg, #ff85a2 0%, #ff6f91 100%);
+    --gradient-accent: linear-gradient(135deg, #ffd93d 0%, #ffe066 100%);
+
+    /* Complex Background */
+    --app-background: radial-gradient(120% 140% at 10% -10%, rgba(255, 111, 145, 0.15) 0%, rgba(255, 255, 255, 0) 50%),
+        radial-gradient(120% 120% at 90% 0%, rgba(255, 217, 61, 0.15) 0%, rgba(255, 255, 255, 0) 45%),
+        radial-gradient(120% 120% at 20% 95%, rgba(94, 211, 182, 0.12) 0%, rgba(255, 255, 255, 0) 55%),
+        linear-gradient(180deg, #fffbfc 0%, #fff7f9 45%, #fffeff 100%);
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+@layer base {
+    html,
+    body {
+        height: 100dvh;
+        overflow: hidden;
+        color: #333333;
+    }
+
+    #root {
+        height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    body {
+        font-family: var(--font-pretendard);
+        color: var(--color-text-primary);
+        background: #ffffff;
+        background-attachment: fixed;
+    }
+
+    /* 검색 입력 스타일 초기화 */
+    [type='search'] {
+        -webkit-appearance: textfield;
+    }
+
+    [type='search']::-webkit-search-cancel-button,
+    [type='search']::-webkit-search-results-button {
+        display: none;
+    }
+
+    /* 전역 리셋 */
+    * {
+        @apply p-0 m-0 box-border;
+    }
+
+    html,
+    body {
+        @apply font-pretendard text-[var(--color-text-primary)] leading-normal text-base;
+    }
+
+    ul,
+    ol,
+    li {
+        @apply list-none;
+    }
+
+    a {
+        @apply no-underline text-[var(--color-brand-main1-dark)] hover:text-[var(--color-brand-main1)];
+    }
+
+    /* 선택 영역 스타일 */
+    ::selection {
+        background-color: var(--color-divider-secondary);
+        color: var(--color-text-primary);
+    }
+}
+
+/* ============================================
+   Component Layer
+   ============================================ */
+@layer components {
+    /* App Shell Layout */
+    .app-shell {
+        min-height: 100%;
+        width: 100%;
+        max-width: var(--app-max-width);
+        margin: 0 auto;
+    }
+
+    .app-frame {
+        min-height: 100%;
+        width: 100%;
+    }
+
+    /* Transition Effects */
+    .transition-sheet {
+        transition-property: height;
+        transition-duration: 220ms;
+        transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    /* Glass Morphism Card */
+    .glass-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--glass-shadow);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Brand Gradient Background */
+    .gradient-brand {
+        background: var(--gradient-brand);
+    }
+
+    .gradient-accent {
+        background: var(--gradient-accent);
+    }
+
+    /* Card Variants */
+    .card-default {
+        background: var(--color-text-white);
+        border: 1px solid var(--color-divider-secondary);
+        border-radius: 12px;
+        transition: all 0.2s ease;
+    }
+
+    .card-default:hover {
+        background: var(--color-bg-elevated);
+        box-shadow: 0 4px 12px rgba(255, 111, 145, 0.15);
+    }
+
+    .card-secondary {
+        background: var(--color-bg-primary);
+        border: 1px solid var(--color-divider-secondary);
+        border-radius: 12px;
+    }
+
+    /* Button Variants */
+    .btn-primary {
+        background: var(--color-brand-main1-dark);
+        color: var(--color-text-white);
+        padding: 12px 24px;
+        border-radius: 8px;
+        @apply font-semibold;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background: var(--color-brand-main1);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 111, 145, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--color-brand-main3);
+        color: var(--color-text-black);
+        padding: 12px 24px;
+        border-radius: 8px;
+        @apply font-semibold;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+        background: var(--color-brand-main3-light);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 217, 61, 0.3);
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: var(--color-brand-main1-dark);
+        padding: 12px 24px;
+        border-radius: 8px;
+        @apply font-semibold;
+        transition: all 0.2s ease;
+        border: 2px solid var(--color-brand-main1-dark);
+        cursor: pointer;
+    }
+
+    .btn-outline:hover {
+        background: var(--color-bg-primary);
+        border-color: var(--color-brand-main1);
+        color: var(--color-brand-main1);
+    }
+
+    /* Status Badges */
+    .badge-success {
+        background: var(--color-brand-main4);
+        color: var(--color-text-white);
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: var(--text-xs);
+        @apply font-medium;
+    }
+
+    .badge-warning {
+        background: var(--color-status-warning);
+        color: var(--color-text-white);
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: var(--text-xs);
+        @apply font-medium;
+    }
+
+    .badge-error {
+        background: var(--color-status-error);
+        color: var(--color-text-white);
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: var(--text-xs);
+        @apply font-medium;
+    }
+
+    /* Input Fields */
+    .input-default {
+        padding: 12px 16px;
+        border: 1px solid var(--color-gray-300);
+        border-radius: 8px;
+        font-size: var(--text-sm);
+        transition: all 0.2s ease;
+        background: var(--color-text-white);
+        color: var(--color-text-primary);
+    }
+
+    .input-default:focus {
+        outline: none;
+        border-color: var(--color-brand-main1-dark);
+        box-shadow: 0 0 0 3px rgba(255, 111, 145, 0.1);
+    }
+
+    .input-default::placeholder {
+        color: var(--color-text-secondary);
+    }
+
+    /* Typography Classes (Figma App 기준) */
+    .headline-1 {
+        font-family: var(--font-pretendard);
+        @apply font-semibold;
+        font-size: var(--text-2xl);
+        line-height: var(--leading-loose);
+    }
+
+    .headline-2 {
+        font-family: var(--font-pretendard);
+        @apply font-semibold;
+        font-size: var(--text-xl);
+        line-height: var(--leading-normal);
+    }
+
+    .subhead-1 {
+        font-family: var(--font-pretendard);
+        @apply font-normal;
+        font-size: var(--text-xl);
+        line-height: var(--leading-normal);
+    }
+
+    .title-1 {
+        font-family: var(--font-pretendard);
+        @apply font-semibold;
+        font-size: var(--text-lg);
+        line-height: var(--leading-snug);
+    }
+
+    .title-2 {
+        font-family: var(--font-pretendard);
+        @apply font-semibold;
+        font-size: var(--text-base);
+        line-height: var(--leading-snug);
+    }
+
+    .body-1 {
+        font-family: var(--font-pretendard);
+        @apply font-semibold;
+        font-size: var(--text-sm);
+        line-height: var(--leading-tight);
+    }
+
+    .body-2 {
+        font-family: var(--font-pretendard);
+        @apply font-medium;
+        font-size: var(--text-sm);
+        line-height: var(--leading-tight);
+    }
+
+    .body-3 {
+        font-family: var(--font-pretendard);
+        @apply font-normal;
+        font-size: var(--text-sm);
+        line-height: var(--leading-tight);
+    }
+
+    .body-4 {
+        font-family: var(--font-pretendard);
+        @apply font-medium;
+        font-size: var(--text-xs);
+        line-height: var(--leading-tight);
+    }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+@layer utilities {
+    /* Text Gradients */
+    .text-gradient-brand {
+        background: var(--gradient-brand);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .text-gradient-accent {
+        background: var(--gradient-accent);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Shadow Utilities */
+    .shadow-brand {
+        box-shadow: 0 4px 14px rgba(255, 111, 145, 0.25);
+    }
+
+    .shadow-accent {
+        box-shadow: 0 4px 14px rgba(255, 217, 61, 0.25);
+    }
+
+    .shadow-soft {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Animations */
+    .animate-slide-in-right {
+        animation: var(--animate-slide-in-right);
+    }
+
+    .animate-fade-in {
+        animation: var(--animate-fade-in);
+    }
+
+    .animate-scale-up {
+        animation: var(--animate-scale-up);
+    }
+
+    /* Focus Visible */
+    .focus-brand:focus-visible {
+        outline: 2px solid var(--color-brand-main1-dark);
+        outline-offset: 2px;
+    }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 480px) {
+    :root {
+        --header-height: 56px;
+        --bottom-nav-height: 64px;
+    }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+    .app-shell {
+        max-width: 100%;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .gradient-brand,
+    .gradient-accent {
+        background: none;
+        color: var(--color-text-primary);
+    }
+}
