@@ -17,15 +17,16 @@ export function StoreCard({ store, onVisitClick }: StoreCardProps) {
                         <FlexBox align="center" gap="xs" asChild>
                             <span className="inline-flex text-gray-900 text-base font-medium">
                                 <StarIcon className="text-brand-main3 w-6 h-6" />
-                                {store.rating.toFixed(1)}
+                                {/* {store.rating.toFixed(1)} */}
+                                3.8
                             </span>
                         </FlexBox>
-                        <span className="text-base">리뷰 {store.reviewCount}개</span>
+                        <span className="text-base">리뷰 3개</span>
                     </FlexBox>
                 </FlexBox>
 
                 <button
-                    onClick={() => onVisitClick?.(store.id)}
+                    onClick={() => onVisitClick?.(store.id.toString())}
                     className="bg-brand-main1 rounded-xl px-2 py-1.5 text-white text-base flex items-center gap-1 cursor-pointer hover:bg-brand-main1/90 active:bg-brand-main1/80 transition-colors"
                 >
                     <EditIcon />
@@ -33,11 +34,11 @@ export function StoreCard({ store, onVisitClick }: StoreCardProps) {
                 </button>
             </FlexBox>
 
-            {store.latestReview && (
+            {/* {store.latestReview && (
                 <div className="w-full bg-bg-primary p-3 rounded-xl text-xs text-gray-900">
                     <p className="line-clamp-2">{store.latestReview}</p>
                 </div>
-            )}
+            )} */}
         </div>
     );
 }

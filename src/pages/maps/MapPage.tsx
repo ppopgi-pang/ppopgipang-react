@@ -11,8 +11,8 @@ import { BottomNav } from '@/components/common/bottom-nav/bottom-nav';
 
 export default function MapPage() {
     const [mapCenter, setMapCenter] = useState<Coordinates>(DEFAULT_LOCATION);
-    const [selectedStore, setSelectedStore] = useState<StoreItem | null>(null);
-    const [isMapBoundsChanged, setIsMapBoundsChanged] = useState(false);
+    const [selectedStore] = useState<StoreItem | null>(null);
+    // const [isMapBoundsChanged, setIsMapBoundsChanged] = useState(false);
 
     const mapBoundsRef = useRef<{
         north: number;
@@ -65,7 +65,7 @@ export default function MapPage() {
         mapBoundsRef.current = newBounds;
 
         // ✅ bounds가 실제로 변경되었을 때만 버튼 표시
-        setIsMapBoundsChanged(true);
+        // setIsMapBoundsChanged(true);
     };
 
     // TODO: storesInBounds를 실제로 구현하거나 props로 받아야 함
