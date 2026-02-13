@@ -14,13 +14,11 @@ interface NavItemProps {
 
 function BottomNav({ children }: BottomNavProps) {
     return (
-        // <div className="fixed bottom-5 left-0 right-0 z-10 px-4 max-w-[var(--app-max-width)] mx-auto">
         <FlexBox direction="row" justify="between" align="center" asChild>
             <nav className="bg-white/60 rounded-full px-2.5 py-3 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.04)] backdrop-blur-[10px] w-full">
                 {children}
             </nav>
         </FlexBox>
-        // </div>
     );
 }
 
@@ -32,7 +30,10 @@ function NavItem({ to, icon }: NavItemProps) {
         <FlexBox direction="column" justify="center" asChild>
             <Link
                 to={to}
-                className={cn('transition-colors', isActive ? 'text-brand-main1' : 'text-gray-900 hover:text-gray-800')}
+                className={cn(
+                    'transition-all duration-300',
+                    isActive ? 'text-brand-main1' : 'text-gray-900 hover:text-gray-700'
+                )}
             >
                 <span
                     className={cn(
