@@ -1,85 +1,61 @@
-export interface StoreItem {
+/**
+ * 매장 타입 (카테고리)
+ */
+export interface StoreType {
+    id: number;
+    name: string;
+    description: string;
+}
+
+/**
+ * 기본 매장 정보
+ */
+export interface BaseStore {
     id: number;
     name: string;
     address: string;
+    phone: string;
     latitude: number;
     longitude: number;
-    phone?: string | null;
-    averageRating?: number;
-    distance?: number;
-    isVisited?: boolean;
-    thumbnailUrl?: string | null;
-    type?: {
-        id: number;
-        name: string;
-        description?: string | null;
-    };
+    region1: string;
+    region2: string;
+    average_rating: number;
+    type: StoreType;
+    created_at: string;
+    updated_at: string;
 }
 
-// Backend 표준 응답 구조
-export interface StoreApiResponse {
-    success: boolean;
-    data: StoreItem[];
-    meta: {
-        count: number;
-    };
+/**
+ * 영역 내 매장
+ */
+export interface StoreInBounds extends BaseStore {
+    recent_review: string | null;
+    review_count: number;
 }
 
-// 페이지네이션 포함 응답
-export interface StoreGalleryResponse {
-    success: boolean;
-    data: {
-        certificationId: number;
-        photoUrl: string;
-        occurredAt: string;
-        userName: string;
-        userProfileImage: string | null;
-        likeCount: number;
-    }[];
-    meta: {
-        page: number;
-        size: number;
-        total: number;
-    };
+/**
+ * 주변 매장 (거리 포함)
+ */
+export interface StoreNearby extends BaseStore {
+    distance: number;
+    recent_review: string | null;
+    review_count: number;
 }
 
-// 가게 요약 정보 (BottomSheet용)
-export interface StoreSummary {
-    store: {
-        id: number;
-        name: string;
-        address: string;
-        category?: string | null;
-        latitude: number;
-        longitude: number;
-        distance?: number;
-        thumbnailUrl?: string | null;
-    };
-    businessStatus: 'open' | 'closed' | 'unknown';
-    myStatus: {
-        visitCount: number;
-        lootCount: number;
-        isScrapped: boolean;
-        tier: 'unknown' | 'visited' | 'master';
-        stamps: {
-            id: number;
-            imageName: string;
-            acquiredAt: string;
-        }[];
-    };
-    recentLoots: {
-        id: number;
-        photoUrl: string;
-        createdAt: string;
-        userName: string;
-    }[];
-    successProb?: number;
-    successLevel?: string;
-    myRanking?: number;
+/**
+ * 검색된 매장 (썸네일 포함)
+ */
+export interface StoreSearch extends BaseStore {
+    distance: number;
+    thumbnail_name: string;
 }
 
-// 레거시 호환용 (삭제 예정)
-export interface StoreListResponse {
-    stores: StoreItem[];
-    total: number;
+/**
+ * 매장 상세 정보
+ */
+export interface StoreDetail extends BaseStore {
+    description: string;
+    business_hours: string;
+    images?: string[];
+    facilities?: string[];
 }
