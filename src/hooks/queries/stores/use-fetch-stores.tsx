@@ -2,16 +2,21 @@ import { storeService } from '@/services/store/store.service';
 import type { Bounds } from '@/types/common/api.types';
 import { useQuery } from '@tanstack/react-query';
 
-export function useFetchStoresInBounds(bounds: Bounds) {
-    const isBoundsValid = bounds.north !== 0 && bounds.south !== 0;
+export function useFetchStoresInBounds(bounds: Bounds | null) {
+    const isBoundsValid =
+        bounds !== null && bounds.north !== 0 && bounds.south !== 0 && bounds.east !== 0 && bounds.west !== 0;
 
     return useQuery({
-        queryKey: ['stores', bounds.north, bounds.south, bounds.east, bounds.west],
+        queryKey: ['stores', 'bounds', bounds],
         queryFn: async () => {
-            if (!isBoundsValid) return;
-            return await storeService.getStoresInBounds(bounds).then((res) => res.data);
+            if (!bounds || !isBoundsValid) {
+                throw new Error('Invalid bounds');
+            }
+            const response = await storeService.getStoresInBounds(bounds);
+            return response.data;
         },
         enabled: false,
-        placeholderData: (previousData) => previousData,
+        // staleTime: 5 * 60 * 1000,
+        // gcTime: 10 * 60 * 1000,
     });
 }
