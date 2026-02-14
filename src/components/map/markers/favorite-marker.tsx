@@ -1,13 +1,13 @@
 import { MapMarker } from 'react-kakao-maps-sdk';
-import FavoritePositionMarkerIcon from '@/assets/icons/map/markers/ic-favorite-marker.svg';
+import FavoriteMarkerIcon from '@/assets/icons/map/markers/ic-favorite-marker.svg';
 import type { MarkerProps } from '@/types/map/map.types';
 
-export default function UserLocationMarker({ position, size = { width: 45, height: 45 } }: MarkerProps) {
+export default function FavoriteLocationMarker({ position, size = { width: 21, height: 31.5 } }: MarkerProps) {
     return (
         <MapMarker
             position={position}
             image={{
-                src: FavoritePositionMarkerIcon,
+                src: FavoriteMarkerIcon,
                 size,
             }}
         />
