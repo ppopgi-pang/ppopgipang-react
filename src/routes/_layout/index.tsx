@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { FlexBox } from '@/components/layout/flexbox';
 import MapPage from '@/pages/maps/MapPage';
 
+
 export const Route = createFileRoute('/_layout/')({
     component: RouteComponent,
 });
