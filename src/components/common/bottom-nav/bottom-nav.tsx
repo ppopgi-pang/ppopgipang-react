@@ -15,12 +15,12 @@ export const MAIN_NAV_CONFIG = [
 ] as const;
 
 const BOTTOM_NAV_STYLES = {
-    container: 'fixed bottom-5 left-0 right-0 z-10 px-4 max-w-[var(--app-max-width)] mx-auto',
-    nav: 'flex items-center justify-around rounded-full bg-white shadow-lg px-6 py-3',
+    container: 'fixed bottom-5 left-0 right-0 z-10 px-5 max-w-[var(--app-max-width)] mx-auto',
+    nav: 'backdrop-blur-[10px] flex items-center justify-between rounded-full bg-white/60 shadow-lg py-3 px-2.5',
     item: {
         base: 'flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200',
-        active: 'bg-primary text-white scale-110',
-        inactive: 'text-gray-600 hover:bg-gray-100',
+        active: 'text-main-1  bg-white px-8 ',
+        inactive: 'text-gray-900 hover:text-gray-700',
     },
 } as const;
 
