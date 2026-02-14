@@ -1,9 +1,9 @@
 import { EditIcon, StarIcon } from '@/assets/icons';
 import { FlexBox } from '@/components/layout/flexbox';
-import type { StoreItem } from '@/types/store/store.types';
+import type { StoreInBounds } from '@/types/store/store.types';
 
 interface StoreCardProps {
-    store: StoreItem;
+    store: StoreInBounds;
     onVisitClick?: (storeId: string) => void;
 }
 

@@ -16,6 +16,7 @@ export interface MarkerImageConfig {
 export interface MarkerProps {
     position: Coordinates;
     size?: { width: number; height: number };
+    onClick?: () => void;
 }
 
 export type MapCenterChangeHandler = (center: Coordinates) => void;

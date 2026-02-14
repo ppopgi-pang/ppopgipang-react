@@ -1,9 +1,8 @@
-// hooks/map/use-user-location.ts
 import type { Coordinates } from '@/types/map/map.types';
 import { useState, useEffect, useRef } from 'react';
 
 export interface GeolocationState {
-    loading: boolean;
+    isLoading: boolean;
     coordinates: Coordinates | undefined;
     heading: number | null;
     accuracy: number | null;
@@ -26,7 +25,7 @@ interface UseGeolocationOptions {
 const getErrorMessage = (error: GeolocationPositionError): string => {
     switch (error.code) {
         case error.PERMISSION_DENIED:
-            return '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.';
+            return '위치 권한이 거부되었습니다. 위치 권한을 허용해주세요.';
         case error.POSITION_UNAVAILABLE:
             return '위치 정보를 사용할 수 없습니다. GPS 신호를 확인해주세요.';
         case error.TIMEOUT:
@@ -46,34 +45,44 @@ const useGeolocation = (options?: UseGeolocationOptions) => {
     } = options || {};
 
     const defaultLocationRef = useRef(defaultLocation);
+    const prevCoordsRef = useRef<Coordinates | undefined>(undefined);
 
     const [state, setState] = useState<GeolocationState>({
-        loading: true,
-        coordinates: defaultLocationRef.current,
+        isLoading: true,
+        coordinates: defaultLocation, // ✅ 초기값으로 defaultLocation 사용
         heading: null,
         accuracy: null,
         error: null,
     });
 
     useEffect(() => {
+        // ✅ Geolocation 지원 여부 체크
         if (!navigator.geolocation) {
             setState({
-                loading: false,
+                isLoading: false,
                 coordinates: defaultLocationRef.current,
                 heading: null,
                 accuracy: null,
                 error: 'GPS를 지원하지 않는 브라우저입니다.',
             });
-            return;
+            return; // 지원 안 하면 여기서 끝
         }
 
+        // ✅ 지원하면 위치 가져오기
         const handleSuccess = (position: GeolocationPosition) => {
+            const newLat = position.coords.latitude;
+            const newLng = position.coords.longitude;
+
+            // 좌표가 실질적으로 변경되지 않았으면 state 업데이트 생략 (무한 렌더 방지)
+            const prev = prevCoordsRef.current;
+            if (prev && prev.lat === newLat && prev.lng === newLng) return;
+
+            const newCoords: Coordinates = { lat: newLat, lng: newLng };
+            prevCoordsRef.current = newCoords;
+
             setState({
-                loading: false,
-                coordinates: {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                },
+                isLoading: false,
+                coordinates: newCoords,
                 heading: position.coords.heading,
                 accuracy: position.coords.accuracy,
                 error: null,
@@ -94,13 +103,16 @@ const useGeolocation = (options?: UseGeolocationOptions) => {
             maximumAge,
         };
 
+        // ✅ 첫 위치 가져오기
         navigator.geolocation.getCurrentPosition(handleSuccess, handleError, geoOptions);
 
+        // ✅ watch 모드면 실시간 추적
         let watchId: number | undefined;
         if (watch) {
             watchId = navigator.geolocation.watchPosition(handleSuccess, handleError, geoOptions);
         }
 
+        // ✅ cleanup
         return () => {
             if (watchId !== undefined) {
                 navigator.geolocation.clearWatch(watchId);
@@ -114,7 +126,7 @@ const useGeolocation = (options?: UseGeolocationOptions) => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 setState({
-                    loading: false,
+                    isLoading: false,
                     coordinates: {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
