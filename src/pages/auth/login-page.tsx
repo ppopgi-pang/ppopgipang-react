@@ -19,7 +19,7 @@ const getKakaoLoginUrl = () => {
         redirect_uri: redirectUri,
         response_type: 'code',
         through_account: 'true',
-        state: 'dev',
+        state: import.meta.env.MODE === 'development' ? 'dev' : 'prod',
     });
 
     return `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
