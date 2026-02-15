@@ -156,11 +156,12 @@
     /* Layout Dimensions */
     --header-height: 68px;
     --bottom-nav-height: 72px;
-    --bottom-nav-offset: 20px; /* BottomNav의 fixed bottom 값 (bottom-5) */
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --bottom-nav-offset: calc(20px + var(--safe-area-bottom)); /* BottomNav의 fixed bottom 값 + 홈바 safe area */
     /* BottomNav 상단까지의 거리 = offset + height */
     --bottom-nav-top: calc(var(--bottom-nav-offset) + var(--bottom-nav-height));
     /* 콘텐츠가 BottomNav 위 16px에 딱 붙는 bottom 값 */
-    --map-bottom-clearance: calc(var(--bottom-nav-top) + var(--bottom-nav-offset) + 5px);
+    --map-bottom-clearance: calc(var(--bottom-nav-top) + 20px + 5px);
     --page-safe-bottom: calc(var(--bottom-nav-height) + 18px);
     --app-max-width: 480px;
 
