@@ -9,13 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutStarRouteImport } from './routes/_layout/star'
 import { Route as LayoutMyRouteImport } from './routes/_layout/my'
 import { Route as LayoutFeedRouteImport } from './routes/_layout/feed'
 import { Route as LayoutChatRouteImport } from './routes/_layout/chat'
 import { Route as LayoutMapsIndexRouteImport } from './routes/_layout/maps/index'
+import { Route as AuthCallbackProviderRouteImport } from './routes/auth/callback.$provider'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/_layout/',
   path: '/',
@@ -46,58 +53,96 @@ const LayoutMapsIndexRoute = LayoutMapsIndexRouteImport.update({
   path: '/maps/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackProviderRoute = AuthCallbackProviderRouteImport.update({
+  id: '/auth/callback/$provider',
+  path: '/auth/callback/$provider',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
+  '/login': typeof LoginRoute
   '/chat': typeof LayoutChatRoute
   '/feed': typeof LayoutFeedRoute
   '/my': typeof LayoutMyRoute
   '/star': typeof LayoutStarRoute
   '/': typeof LayoutIndexRoute
+  '/auth/callback/$provider': typeof AuthCallbackProviderRoute
   '/maps/': typeof LayoutMapsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/login': typeof LoginRoute
   '/chat': typeof LayoutChatRoute
   '/feed': typeof LayoutFeedRoute
   '/my': typeof LayoutMyRoute
   '/star': typeof LayoutStarRoute
   '/': typeof LayoutIndexRoute
+  '/auth/callback/$provider': typeof AuthCallbackProviderRoute
   '/maps': typeof LayoutMapsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/login': typeof LoginRoute
   '/_layout/chat': typeof LayoutChatRoute
   '/_layout/feed': typeof LayoutFeedRoute
   '/_layout/my': typeof LayoutMyRoute
   '/_layout/star': typeof LayoutStarRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/auth/callback/$provider': typeof AuthCallbackProviderRoute
   '/_layout/maps/': typeof LayoutMapsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/chat' | '/feed' | '/my' | '/star' | '/' | '/maps/'
+  fullPaths:
+    | '/login'
+    | '/chat'
+    | '/feed'
+    | '/my'
+    | '/star'
+    | '/'
+    | '/auth/callback/$provider'
+    | '/maps/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/chat' | '/feed' | '/my' | '/star' | '/' | '/maps'
+  to:
+    | '/login'
+    | '/chat'
+    | '/feed'
+    | '/my'
+    | '/star'
+    | '/'
+    | '/auth/callback/$provider'
+    | '/maps'
   id:
     | '__root__'
+    | '/login'
     | '/_layout/chat'
     | '/_layout/feed'
     | '/_layout/my'
     | '/_layout/star'
     | '/_layout/'
+    | '/auth/callback/$provider'
     | '/_layout/maps/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  LoginRoute: typeof LoginRoute
   LayoutChatRoute: typeof LayoutChatRoute
   LayoutFeedRoute: typeof LayoutFeedRoute
   LayoutMyRoute: typeof LayoutMyRoute
   LayoutStarRoute: typeof LayoutStarRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
+  AuthCallbackProviderRoute: typeof AuthCallbackProviderRoute
   LayoutMapsIndexRoute: typeof LayoutMapsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout/': {
       id: '/_layout/'
       path: '/'
@@ -140,15 +185,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutMapsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback/$provider': {
+      id: '/auth/callback/$provider'
+      path: '/auth/callback/$provider'
+      fullPath: '/auth/callback/$provider'
+      preLoaderRoute: typeof AuthCallbackProviderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  LoginRoute: LoginRoute,
   LayoutChatRoute: LayoutChatRoute,
   LayoutFeedRoute: LayoutFeedRoute,
   LayoutMyRoute: LayoutMyRoute,
   LayoutStarRoute: LayoutStarRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+  AuthCallbackProviderRoute: AuthCallbackProviderRoute,
   LayoutMapsIndexRoute: LayoutMapsIndexRoute,
 }
 export const routeTree = rootRouteImport

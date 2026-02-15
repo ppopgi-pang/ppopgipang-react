@@ -4,6 +4,7 @@ import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import path from 'path';
+import basicSsl from '@vitejs/plugin-basic-ssl';
 
 export default defineConfig({
     plugins: [
@@ -19,6 +20,7 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
+        basicSsl(),
     ],
     resolve: {
         alias: {
