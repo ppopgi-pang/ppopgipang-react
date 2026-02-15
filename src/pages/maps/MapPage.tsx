@@ -1,4 +1,5 @@
 import { ListIcon, LocationIcon } from '@/assets/icons';
+import FilterModal from '@/components/common/modal/filter-modal';
 import CircularLoadingSpinner from '@/components/common/spinner/circular-loading-spinner';
 import { FlexBox } from '@/components/layout/flexbox';
 import StoreFilteringButton from '@/components/map/buttons/store-filtering-button';
@@ -31,6 +32,7 @@ export default function MapPage() {
 
     const { data, refetch } = useFetchStoresInBounds(searchBounds);
     const { isOpen, open, close } = useModal();
+    const { isOpen: isFilterModalOpen, open: openFilterModal, close: closeFilterModal } = useModal();
 
     const handleRefetchStore = () => {
         commitSearchBounds();
@@ -68,6 +70,8 @@ export default function MapPage() {
     return (
         <div className="w-full h-full relative">
             {isOpen && <SearchModal onClose={close} />}
+            <FilterModal isOpen={isFilterModalOpen} onClose={closeFilterModal} />
+            {/* {selectedSearchedStore && <StoreDetailModal isOpen={isOpen} close={close} store={selectedSearchedStore}/>} */}
 
             {/** 지도 */}
             <Map
@@ -91,33 +95,43 @@ export default function MapPage() {
                 )}
             </Map>
 
-            {/** 지도 상단 헤더 */}
+            {/** 지도 상단: 검색바 + 필터버튼 */}
             <FlexBox
                 direction={'column'}
                 align={'center'}
-                justify={'center'}
-                className="py-4 px-5 absolute top-0 left-1/2 -translate-x-1/2 w-full"
-                style={{ zIndex: ZINDEX.mapButton }}
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-full py-4 px-5"
                 gap={'md'}
+                style={{ zIndex: ZINDEX.mapHeader }}
             >
                 <MapHeader>
                     <SearchBarButton searchedPlace="" onClick={open} />
-                    <StoreFilteringButton />
+                    <StoreFilteringButton
+                        isActive={isFilterModalOpen}
+                        onClick={() => {
+                            if (isFilterModalOpen) {
+                                closeFilterModal();
+                            } else openFilterModal();
+                        }}
+                    />
                 </MapHeader>
-                <QuestBox />
+            </FlexBox>
 
+            <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-full px-5 pt-[82px] flex flex-col items-center gap-4"
+                style={{ zIndex: ZINDEX.mapButton }}
+            >
+                <QuestBox />
                 {isCenterChanged && (
                     <RefetchStoreButton isVisible={isCenterChanged} onRefetchStore={handleRefetchStore} />
                 )}
-            </FlexBox>
+            </div>
 
-            {/** 지도 하단 */}
             <FlexBox
                 direction={'column'}
                 align={'center'}
-                className="absolute bottom-28 w-full"
+                className="absolute w-full"
                 gap={'sm'}
-                style={{ zIndex: ZINDEX.mapButton }}
+                style={{ zIndex: ZINDEX.mapButton, bottom: 'var(--map-bottom-clearance)' }}
             >
                 <FlexBox justify={'between'} align={'center'} className="w-full px-5">
                     <button

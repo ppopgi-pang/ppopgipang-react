@@ -5,6 +5,7 @@ import React from 'react';
 import type { ComponentType } from 'react';
 
 import { HomeIcon, StarIcon, ChatIcon, MyIcon, FeedIcon } from '@/assets/icons';
+import { ZINDEX } from '@/constants/z-index';
 
 export const MAIN_NAV_CONFIG = [
     { to: '/maps', icon: HomeIcon, label: '지도' },
@@ -15,11 +16,11 @@ export const MAIN_NAV_CONFIG = [
 ] as const;
 
 const BOTTOM_NAV_STYLES = {
-    container: 'fixed bottom-5 left-0 right-0 z-10 px-5 max-w-[var(--app-max-width)] mx-auto',
+    container: 'fixed bottom-[var(--bottom-nav-offset)] left-0 right-0 px-5 max-w-[var(--app-max-width)] mx-auto',
     nav: 'backdrop-blur-[10px] flex items-center justify-between rounded-full bg-white/60 shadow-lg py-3 px-2.5',
     item: {
         base: 'flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200',
-        active: 'text-main-1  bg-white px-8 ',
+        active: 'text-main-1  bg-white px-9 shadow-lg',
         inactive: 'text-gray-900 hover:text-gray-700',
     },
 } as const;
@@ -46,7 +47,7 @@ interface NavItemProps {
  */
 function BottomNavRoot({ children, className }: BottomNavProps) {
     return (
-        <div className={cn(BOTTOM_NAV_STYLES.container, className)}>
+        <div className={cn(BOTTOM_NAV_STYLES.container, className)} style={{ zIndex: ZINDEX.bottomNavigationBar }}>
             <FlexBox
                 as="nav"
                 align="center"

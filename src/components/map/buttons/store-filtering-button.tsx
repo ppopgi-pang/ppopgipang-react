@@ -12,7 +12,7 @@ export default function StoreFilteringButton({ isActive = false, className, ...p
             type="button"
             className={cn(
                 'h-full aspect-square flex items-center justify-center',
-                'rounded-full bg-white/40 border-gray-200 backdrop-blur-[33px]',
+                'rounded-full bg-white border-gray-200 backdrop-blur-[33px]',
                 'cursor-pointer transition-all duration-200',
                 'shadow-[0px_4px_4px_0px_rgba(0,0,0,0.04)]',
                 'hover:text-divider-primary active:text-divider-primary active:scale-90 transition-all duration-200',
