@@ -11,6 +11,13 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'MBC1961GulimM';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/MBC1961GulimM.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* ============================================
    Tailwind Theme 변수
    ============================================ */
@@ -77,6 +84,7 @@
      6. 폰트 패밀리
      ========================================== */
     --font-pretendard: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    --font-mbc: 'MBC1961GulimM', sans-serif;
 
     /* ==========================================
      7. Typography Scale (Figma 토큰 기반)
@@ -148,6 +156,11 @@
     /* Layout Dimensions */
     --header-height: 68px;
     --bottom-nav-height: 72px;
+    --bottom-nav-offset: 20px; /* BottomNav의 fixed bottom 값 (bottom-5) */
+    /* BottomNav 상단까지의 거리 = offset + height */
+    --bottom-nav-top: calc(var(--bottom-nav-offset) + var(--bottom-nav-height));
+    /* 콘텐츠가 BottomNav 위 16px에 딱 붙는 bottom 값 */
+    --map-bottom-clearance: calc(var(--bottom-nav-top) + var(--bottom-nav-offset) + 5px);
     --page-safe-bottom: calc(var(--bottom-nav-height) + 18px);
     --app-max-width: 480px;
 
