@@ -4,7 +4,7 @@ import type { Bounds } from '@/types/common/api.types';
  * API 기본 설정
  */
 export const API_CONFIG = {
-    BASE_URL: import.meta.env.VITE_API_URL || 'https://api.ppopgipang.com',
+    BASE_URL: import.meta.env.VITE_API_URL || 'https://api.ppopgi.me/api/v1',
     TIMEOUT: 10000,
 } as const;
 
