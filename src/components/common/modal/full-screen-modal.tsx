@@ -6,7 +6,7 @@ export default function FullScreenModal({ children }: { children: ReactNode }) {
     return createPortal(
         <div
             style={{ zIndex: ZINDEX.fullscreenModal }}
-            className="fixed inset-0 bg-gray-200 flex justify-center w-full h-full"
+            className="fixed inset-0 bg-gray-200 flex justify-center w-dvw h-dvw"
         >
             <div className="app-shell bg-white h-full overflow-y-auto">{children}</div>
         </div>,
