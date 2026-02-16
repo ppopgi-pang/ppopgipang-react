@@ -137,7 +137,7 @@ export default function SearchModal({ prevText, onClose }: { prevText?: string; 
                     <input
                         onChange={(e) => setSearchText(e.target.value)}
                         placeholder="지역명, 가게명 검색"
-                        className="outline-none placeholder:text-gray-500 leading-normal text-base flex-1 pl-4 py-2 rounded-full bg-gray-200"
+                        className="border-2 border-transparent focus-within:border-[#ffc2d6] transition-colors outline-none placeholder:text-gray-500 leading-normal text-base flex-1 pl-4 py-2 rounded-full bg-gray-200"
                     />
                     <button
                         disabled={searchText.trim().length <= 0}
