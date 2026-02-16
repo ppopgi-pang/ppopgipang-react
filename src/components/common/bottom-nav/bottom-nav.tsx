@@ -8,7 +8,7 @@ import { HomeIcon, StarIcon, ChatIcon, MyIcon, FeedIcon } from '@/assets/icons';
 import { ZINDEX } from '@/constants/z-index';
 
 export const MAIN_NAV_CONFIG = [
-    { to: '/maps', icon: HomeIcon, label: '지도' },
+    { to: '/', icon: HomeIcon, label: '지도' },
     { to: '/feed', icon: FeedIcon, label: '피드' },
     { to: '/star', icon: StarIcon, label: '즐겨찾기' },
     { to: '/chat', icon: ChatIcon, label: '채팅' },
