@@ -10,7 +10,7 @@ export const Route = createRootRoute({
 function RootComponent() {
     return (
         <QueryClientProvider client={queryClient}>
-            <div className="w-full h-dvh bg-gray-200 flex justify-center">
+            <div className="w-dvw h-dvh bg-gray-200 flex justify-center">
                 <div className="app-shell bg-white h-full">
                     <Outlet />
                     <MainBottomNav />
