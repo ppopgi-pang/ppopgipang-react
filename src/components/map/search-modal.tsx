@@ -143,7 +143,7 @@ export default function SearchModal({ prevText, onClose }: { prevText?: string; 
                         disabled={searchText.trim().length <= 0}
                         type="button"
                         onClick={() => refetch()}
-                        className="cursor-pointer disabled:text-gray-500 text-brand-main1 text-base font-semibold"
+                        className="cursor-pointer disabled:text-gray-500 text-brand-main1 text-base font-semibold shrink-0 no-wrap min-w-9"
                     >
                         검색
                     </button>
