@@ -1,18 +1,6 @@
-import { FlexBox } from '@/components/layout/flexbox';
-import MapPage from '@/pages/maps/MapPage';
 import { createFileRoute } from '@tanstack/react-router';
 
+// maps.tsx (부모)가 MapPage를 렌더링하므로 index는 null 반환
 export const Route = createFileRoute('/_layout/maps/')({
-    component: RouteComponent,
+    component: () => null,
 });
-
-function RouteComponent() {
-    return (
-        <FlexBox direction="column" justify="start" align="center" className="relative w-full h-full">
-            <header></header>
-            <main className="w-full h-full">
-                <MapPage />
-            </main>
-        </FlexBox>
-    );
-}

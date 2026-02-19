@@ -10,12 +10,14 @@ interface StoreCardListProps {
     storeItems: StoreInBounds[];
     selectedStoreId: number | null;
     onSelectStore: (store: StoreInBounds) => void;
+    onCardClick?: (store: StoreInBounds) => void;
 }
 
 export default function StoreCardList({
     storeItems,
     selectedStoreId,
     onSelectStore,
+    onCardClick,
     filter = 'all',
 }: StoreCardListProps) {
     const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
@@ -135,7 +137,19 @@ export default function StoreCardList({
                 className="w-full pl-4! pr-10!"
             >
                 {filteredStores.map((store) => (
-                    <SwiperSlide key={store.id} style={{ width: 'auto' }} className="cursor-pointer">
+                    <SwiperSlide
+                        key={store.id}
+                        style={{ width: 'auto' }}
+                        className="cursor-pointer"
+                        onClick={() => {
+                            const isActive = selectedStoreId === store.id;
+                            if (isActive) {
+                                onCardClick?.(store);
+                            } else {
+                                onSelectStore(store);
+                            }
+                        }}
+                    >
                         <StoreItemCard store={store} isActive={selectedStoreId === store.id} />
                     </SwiperSlide>
                 ))}

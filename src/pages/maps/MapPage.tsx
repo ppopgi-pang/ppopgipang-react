@@ -20,8 +20,10 @@ import type { Coordinates } from '@/types/map/map.types';
 import type { StoreInBounds } from '@/types/store/store.types';
 import { useEffect, useState } from 'react';
 import { Map } from 'react-kakao-maps-sdk';
+import { useNavigate } from '@tanstack/react-router';
 
 export default function MapPage() {
+    const navigate = useNavigate();
     const { loading, error, location: userLocation } = useGeolocation();
     const { updateCurrentBounds, searchBounds, commitSearchBounds, initializeSearchBounds } = useMapBounds();
 
@@ -33,6 +35,10 @@ export default function MapPage() {
     const { data, refetch } = useFetchStoresInBounds(searchBounds);
     const { isOpen, open, close } = useModal();
     const { isOpen: isFilterModalOpen, open: openFilterModal, close: closeFilterModal } = useModal();
+
+    const handleCardClick = (store: StoreInBounds) => {
+        navigate({ to: '/maps/$storeId/modal', params: { storeId: String(store.id) } });
+    };
 
     const handleRefetchStore = () => {
         commitSearchBounds();
@@ -80,7 +86,7 @@ export default function MapPage() {
                 isPanto
                 level={3}
                 maxLevel={1}
-                minLevel={9}
+                minLevel={15}
                 onDragEnd={(map) => {
                     const mapCenter = map.getCenter();
                     setCenterCoordinates({ lat: mapCenter.getLat(), lng: mapCenter.getLng() });
@@ -139,7 +145,7 @@ export default function MapPage() {
                         className="flex items-center p-2 gap-2 text-gray-700 text-base bg-white rounded-xl cursor-pointer leading-none"
                     >
                         <ListIcon className="size-6" />
-                        목록보기
+                        목록보기{data && `(${data?.length})`}
                     </button>
                     <button
                         onClick={() => {
@@ -159,6 +165,7 @@ export default function MapPage() {
                             <StoreCardList
                                 selectedStoreId={selectedStore}
                                 onSelectStore={handleSelectStore}
+                                onCardClick={handleCardClick}
                                 storeItems={data}
                             />
                         )}
