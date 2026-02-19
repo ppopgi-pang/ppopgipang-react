@@ -1,4 +1,5 @@
-import { EditIcon, StarIcon } from '@/assets/icons';
+import { StarIcon } from '@/assets/icons';
+import VisitCertificationButton from '@/components/map/buttons/visit-certification-button';
 import { FlexBox } from '@/components/layout/flexbox';
 import { cn } from '@/libs/common/cn';
 import type { StoreInBounds } from '@/types/store/store.types';
@@ -27,10 +28,7 @@ export default function StoreItemCard({ store, isActive }: { store: StoreInBound
                     </FlexBox>
                 </FlexBox>
 
-                <button className="bg-brand-main1 rounded-xl px-2 py-1.5 text-white text-base flex items-center gap-1 cursor-pointer shrink-0">
-                    <EditIcon />
-                    방문인증
-                </button>
+                <VisitCertificationButton />
             </FlexBox>
 
             {store.recent_review && (

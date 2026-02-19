@@ -1,5 +1,6 @@
-import { EditIcon, StarIcon } from '@/assets/icons';
+import { StarIcon } from '@/assets/icons';
 import { FlexBox } from '@/components/layout/flexbox';
+import VisitCertificationButton from '@/components/map/buttons/visit-certification-button';
 import type { StoreInBounds } from '@/types/store/store.types';
 
 interface StoreCardProps {
@@ -25,13 +26,7 @@ export function StoreCard({ store, onVisitClick }: StoreCardProps) {
                     </FlexBox>
                 </FlexBox>
 
-                <button
-                    onClick={() => onVisitClick?.(store.id.toString())}
-                    className="bg-brand-main1 rounded-xl px-2 py-1.5 text-white text-base flex items-center gap-1 cursor-pointer hover:bg-brand-main1/90 active:bg-brand-main1/80 transition-colors"
-                >
-                    <EditIcon />
-                    방문인증
-                </button>
+                <VisitCertificationButton onClick={() => onVisitClick?.(store.id.toString())} />
             </FlexBox>
 
             {/* {store.latestReview && (
