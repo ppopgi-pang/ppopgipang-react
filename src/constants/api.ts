@@ -17,7 +17,8 @@ export const API_ENDPOINTS = {
         IN_BOUNDS: '/stores/in-bounds',
         NEARBY: '/stores/nearby',
         SEARCH: '/stores/search',
-        // DETAIL: (id: number) => `/stores/${id}`,
+        DETAIL: (storeId: number) => `/stores/details/${storeId}`,
+        SUMMARY: (storeId: number) => `/stores/summary/${storeId}`,
     },
 
     REVIEWS: {
