@@ -53,9 +53,33 @@ export interface StoreSearch extends BaseStore {
 /**
  * 매장 상세 정보
  */
-export interface StoreDetail extends BaseStore {
-    description: string;
-    business_hours: string;
-    images?: string[];
-    facilities?: string[];
+
+export type PaymentType = 'cash' | 'card' | 'qr';
+
+export interface StoreFacility {
+    machine_count: number;
+    payment_methods: PaymentType[];
+}
+
+export interface StoreOpeningHour {
+    id: number;
+    dayOfWeek: number;
+    openTime: string;
+    closeTime: string;
+    isClosed: boolean;
+}
+
+export interface StoreDetail {
+    is_bookmark: boolean;
+    phone: string;
+    store_facility_response: StoreFacility;
+    store_opening_hour_responses: StoreOpeningHour[];
+}
+
+export interface StoreSummary {
+    average_rating: number;
+    id: number;
+    image_names: string[];
+    name: string;
+    review_count: number;
 }

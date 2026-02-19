@@ -40,8 +40,16 @@ export const storeService = {
     /**
      * 매장 상세 조회
      */
-    // async getStoreDetail(id: number) {
-    //     const { data } = await api.get(API_ENDPOINTS.STORES.DETAIL(id));
-    //     return data;
-    // },
+    async getStoreDetail(storeId: number) {
+        const { data } = await api.get(API_ENDPOINTS.STORES.DETAIL(storeId));
+        return data;
+    },
+
+    /**
+     * 가게 기본 조회
+     */
+    async getStoreSummary(storeId: number) {
+        const { data } = await api.get(API_ENDPOINTS.STORES.SUMMARY(storeId));
+        return data;
+    },
 } as const;

@@ -1,5 +1,5 @@
 import type { ApiResponse, Bounds, Coordinates } from '@/types/common/api.types';
-import type { StoreInBounds, StoreNearby, StoreSearch } from './store.types';
+import type { StoreDetail, StoreInBounds, StoreNearby, StoreSearch, StoreSummary } from './store.types';
 
 /**
  * 영역 내 매장 조회 - 요청
@@ -45,3 +45,7 @@ export interface SearchStoresRequest {
  * 매장 검색 - 응답
  */
 export type SearchStoresResponse = ApiResponse<StoreSearch[]>;
+
+export type GetStoreDetailResponse = ApiResponse<StoreDetail>;
+
+export type GetStoreSummaryResponse = ApiResponse<StoreSummary>;
