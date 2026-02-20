@@ -8,6 +8,7 @@ import type {
     SearchStoresRequest,
     SearchStoresResponse,
 } from '@/types/store/store.api.types';
+import type { StoreDetail, StoreSummary } from '@/types/store/store.types';
 
 /**
  * Store API 서비스
@@ -41,7 +42,7 @@ export const storeService = {
      * 매장 상세 조회
      */
     async getStoreDetail(storeId: number) {
-        const { data } = await api.get(API_ENDPOINTS.STORES.DETAIL(storeId));
+        const { data } = await api.get<StoreDetail>(API_ENDPOINTS.STORES.DETAIL(storeId));
         return data;
     },
 
@@ -49,7 +50,7 @@ export const storeService = {
      * 가게 기본 조회
      */
     async getStoreSummary(storeId: number) {
-        const { data } = await api.get(API_ENDPOINTS.STORES.SUMMARY(storeId));
+        const { data } = await api.get<StoreSummary>(API_ENDPOINTS.STORES.SUMMARY(storeId));
         return data;
     },
 } as const;

@@ -1,6 +1,5 @@
 import { useQueries } from '@tanstack/react-query';
 import { storeService } from '@/services/store/store.service';
-import type { StoreDetail, StoreSummary } from '@/types/store/store.types';
 
 export const useFetchStorePageData = (storeId: number) => {
     const [detailQuery, summaryQuery] = useQueries({
@@ -17,8 +16,8 @@ export const useFetchStorePageData = (storeId: number) => {
     });
 
     return {
-        storeDetail: detailQuery.data as StoreDetail,
-        storeSummary: summaryQuery.data as StoreSummary,
+        storeDetail: detailQuery.data,
+        storeSummary: summaryQuery.data,
         isPending: detailQuery.isPending || summaryQuery.isPending,
         isError: detailQuery.isError || summaryQuery.isError,
         error: detailQuery.error ?? summaryQuery.error,
