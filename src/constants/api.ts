@@ -1,4 +1,5 @@
 import type { Bounds } from '@/types/common/api.types';
+import type { GetImageWithFileNameRequest } from '@/types/common/common.types';
 
 /**
  * API 기본 설정
@@ -19,6 +20,11 @@ export const API_ENDPOINTS = {
         SEARCH: '/stores/search',
         DETAIL: (storeId: number) => `/stores/details/${storeId}`,
         SUMMARY: (storeId: number) => `/stores/summary/${storeId}`,
+    },
+
+    COMMON: {
+        GET_IMAGE: ({ path, fileName }: GetImageWithFileNameRequest) => `/commons/images/${path}/${fileName}`,
+        UPLOAD_IMAGE: '/commons/file-uploads',
     },
 
     REVIEWS: {
