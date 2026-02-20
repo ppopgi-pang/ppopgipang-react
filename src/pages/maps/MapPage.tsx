@@ -1,8 +1,8 @@
-import { ListIcon, LocationIcon } from '@/assets/icons';
 import FilterModal from '@/components/common/modal/filter-modal';
 import CircularLoadingSpinner from '@/components/common/spinner/circular-loading-spinner';
 import { FlexBox } from '@/components/layout/flexbox';
 import StoreFilteringButton from '@/components/map/buttons/store-filtering-button';
+import MapBottomControls from '@/components/map/map-bottom-controls';
 import MapHeader from '@/components/map/map-header';
 import UserLocationMarker from '@/components/map/markers/user-location-marker';
 import QuestBox from '@/components/map/quest-box';
@@ -16,9 +16,9 @@ import useModal from '@/hooks/common/use-modal';
 import useGeolocation from '@/hooks/map/use-current-location';
 import { useMapBounds } from '@/hooks/map/use-map-bounds';
 import { useFetchStoresInBounds } from '@/hooks/queries/stores/use-fetch-stores';
-import type { Coordinates } from '@/types/map/map.types';
+import { useCenterCoordinates, useIsBoundsChanged, useMapStore } from '@/stores/use-map-store';
 import type { StoreInBounds } from '@/types/store/store.types';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Map } from 'react-kakao-maps-sdk';
 import { useNavigate } from '@tanstack/react-router';
 
@@ -27,12 +27,17 @@ export default function MapPage() {
     const { loading, error, location: userLocation } = useGeolocation();
     const { updateCurrentBounds, searchBounds, commitSearchBounds, initializeSearchBounds } = useMapBounds();
 
-    const [selectedStore, setSelectedStore] = useState<number | null>(null);
-    const [centerCoordinates, setCenterCoordinates] = useState<Coordinates | null>(null);
+    // 지도 관련 전역 상태
+    const centerCoordinates = useCenterCoordinates();
+    const isBoundsChanged = useIsBoundsChanged();
+    const { setCenterCoordinates, setIsBoundsChanged, reset } = useMapStore();
 
-    const [isCenterChanged, setIsCenterChanged] = useState(false);
+    // 맵 페이지 진입 시 이전 상태 초기화 (다른 페이지에서 돌아올 때 포함)
+    useEffect(() => { reset(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const { data, refetch } = useFetchStoresInBounds(searchBounds);
+
+    // 로컬 모달 상태 (MapPage 내부에서만 사용)
     const { isOpen, open, close } = useModal();
     const { isOpen: isFilterModalOpen, open: openFilterModal, close: closeFilterModal } = useModal();
 
@@ -42,17 +47,7 @@ export default function MapPage() {
 
     const handleRefetchStore = () => {
         commitSearchBounds();
-        setIsCenterChanged(false);
-    };
-
-    const handleSelectStore = (store: StoreInBounds) => {
-        if (selectedStore === store.id) {
-            setSelectedStore(null);
-            return;
-        }
-
-        setSelectedStore(store.id);
-        setCenterCoordinates({ lat: store.latitude, lng: store.longitude });
+        setIsBoundsChanged(false);
     };
 
     useEffect(() => {
@@ -77,7 +72,6 @@ export default function MapPage() {
         <div className="w-full h-full relative">
             {isOpen && <SearchModal onClose={close} />}
             <FilterModal isOpen={isFilterModalOpen} onClose={closeFilterModal} />
-            {/* {selectedSearchedStore && <StoreDetailModal isOpen={isOpen} close={close} store={selectedSearchedStore}/>} */}
 
             {/** 지도 */}
             <Map
@@ -90,15 +84,16 @@ export default function MapPage() {
                 onDragEnd={(map) => {
                     const mapCenter = map.getCenter();
                     setCenterCoordinates({ lat: mapCenter.getLat(), lng: mapCenter.getLng() });
-                    setIsCenterChanged(true);
+                    setIsBoundsChanged(true);
+                }}
+                onZoomChanged={() => {
+                    setIsBoundsChanged(true);
                 }}
                 onCreate={initializeSearchBounds}
                 onBoundsChanged={updateCurrentBounds}
             >
                 <UserLocationMarker position={userLocation} />
-                {data && (
-                    <StoreMarkers stores={data} selectedStoreId={selectedStore} onSelectStore={handleSelectStore} />
-                )}
+                {data && <StoreMarkers stores={data} />}
             </Map>
 
             {/** 지도 상단: 검색바 + 필터버튼 */}
@@ -122,16 +117,18 @@ export default function MapPage() {
                 </MapHeader>
             </FlexBox>
 
+            {/** 지도 중단: 퀘스트박스 + 재검색 버튼 */}
             <div
                 className="absolute top-0 left-1/2 -translate-x-1/2 w-full px-5 pt-[82px] flex flex-col items-center gap-4"
                 style={{ zIndex: ZINDEX.mapButton }}
             >
                 <QuestBox />
-                {isCenterChanged && (
-                    <RefetchStoreButton isVisible={isCenterChanged} onRefetchStore={handleRefetchStore} />
+                {isBoundsChanged && (
+                    <RefetchStoreButton isVisible={isBoundsChanged} onRefetchStore={handleRefetchStore} />
                 )}
             </div>
 
+            {/** 지도 하단: 목록보기·위치재설정 버튼 + 매장 카드 리스트 */}
             <FlexBox
                 direction={'column'}
                 align={'center'}
@@ -139,36 +136,14 @@ export default function MapPage() {
                 gap={'sm'}
                 style={{ zIndex: ZINDEX.mapButton, bottom: 'var(--map-bottom-clearance)' }}
             >
-                <FlexBox justify={'between'} align={'center'} className="w-full px-5">
-                    <button
-                        type="button"
-                        className="flex items-center p-2 gap-2 text-gray-700 text-base bg-white rounded-xl cursor-pointer leading-none"
-                    >
-                        <ListIcon className="size-6" />
-                        목록보기{data && `(${data?.length})`}
-                    </button>
-                    <button
-                        onClick={() => {
-                            setIsCenterChanged(false);
-                            refetch();
-                            setSelectedStore(null);
-                            setCenterCoordinates(userLocation);
-                        }}
-                        className="cursor-pointer transition-all duration-100 hover:text-divider-primary bg-white rounded-full size-[42px] flex items-center justify-center"
-                    >
-                        <LocationIcon className="size-6" />
-                    </button>
-                </FlexBox>
+                <MapBottomControls
+                    storeCount={data?.length ?? 0}
+                    userLocation={userLocation}
+                    onRefetch={() => refetch()}
+                />
                 <div className="w-full flex items-center gap-2">
                     <FlexBox direction="row" gap="md" className="w-full">
-                        {selectedStore && data && (
-                            <StoreCardList
-                                selectedStoreId={selectedStore}
-                                onSelectStore={handleSelectStore}
-                                onCardClick={handleCardClick}
-                                storeItems={data}
-                            />
-                        )}
+                        {data && <StoreCardList onCardClick={handleCardClick} storeItems={data} />}
                     </FlexBox>
                 </div>
             </FlexBox>

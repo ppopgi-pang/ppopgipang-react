@@ -1,11 +1,13 @@
 import FullScreenModal from '@/components/common/modal/full-screen-modal';
-import { BookmarkIcon, LeftArrowIcon, StarIcon } from '@/assets/icons';
+import { BookmarkIcon, LeftArrowIcon } from '@/assets/icons';
 import { FlexBox } from '@/components/layout/flexbox';
-import VisitCertificationButton from './buttons/visit-certification-button';
 import { Map } from 'react-kakao-maps-sdk';
 import ActiveMarker from './markers/active-marker';
 import { useFetchStorePageData } from '@/hooks/queries/stores/use-fetch-store-page-data';
 import { formatPaymentMethods } from '@/utils/store/format-payment-methods';
+import { useStoreImages } from '@/hooks/queries/common/use-store-images';
+import StoreProfileSection from './sections/store-profile-section';
+import StoreCoverImage from './sections/store-cover-image';
 
 interface StoreDetailModalProps {
     storeId: number;
@@ -13,8 +15,9 @@ interface StoreDetailModalProps {
 }
 
 export default function StoreDetailModal({ storeId, onClose }: StoreDetailModalProps) {
-    // TODO: storeId로 상세 데이터 fetch
     const { storeDetail, storeSummary, isPending, isError, error } = useFetchStorePageData(storeId);
+
+    const { imageUrls } = useStoreImages(storeSummary?.image_names ?? []);
 
     if (isPending) {
         return '스켈레톤';
@@ -24,37 +27,24 @@ export default function StoreDetailModal({ storeId, onClose }: StoreDetailModalP
         return <div>{error?.message || ''}</div>;
     }
 
-    if (isError || !storeDetail || !storeSummary) {
+    if (!storeDetail || !storeSummary) {
         return <div>에러!</div>;
     }
 
     return (
         <FullScreenModal>
             <FlexBox align="center" justify={'between'} gap="sm" asChild>
-                <header className="w-full px-5 py-4 border-b-2 border-gray-200">
+                <header className=" bg-white left-0 top-0 right-0 w-full px-5 py-4 border-b-2 border-gray-200">
                     <button type="button" onClick={onClose} className="cursor-pointer">
                         <LeftArrowIcon className="w-[15px] h-[30px]" />
                     </button>
                 </header>
             </FlexBox>
 
-            <main className="w-full flex-1 flex flex-col gap-4">
+            <main className="w-full flex-1 flex flex-col gap-4 ">
                 <FlexBox direction={'column'} className="w-full" as="section">
-                    <FlexBox align={'center'} justify={'start'} className="w-full px-5 py-4 gap-4" as="div">
-                        <img className="rounded-full overflow-hidden size-16 shrink-0" />
-                        <FlexBox direction={'column'} as="p" className="flex-1">
-                            <h2 className="title-1">{storeSummary.name}</h2>
-                            <FlexBox align="center" gap="xs">
-                                <StarIcon className="text-brand-main3 size-3" />
-                                <span className="text-base font-medium">{storeSummary.average_rating}</span>
-                                <span className="text-base font-medium inline-block ml-1 shrink-0 no-wrap">
-                                    리뷰 {storeSummary.review_count}개
-                                </span>
-                            </FlexBox>
-                        </FlexBox>
-                        <VisitCertificationButton />
-                    </FlexBox>
-                    <img src={''} className="w-full h-[221px] object-cover" />
+                    <StoreProfileSection storeSummary={storeSummary} thumbnailUrl={imageUrls[0] ?? null} />
+                    <StoreCoverImage src={imageUrls[1] ?? null} />
                 </FlexBox>
                 <FlexBox direction={'column'} className="w-full" as="section">
                     <nav className="w-full flex transition-all duration-200">
@@ -72,13 +62,15 @@ export default function StoreDetailModal({ storeId, onClose }: StoreDetailModalP
                         <h3 className="title-1">가게 정보</h3>
                         <FlexBox direction={'column'} gap="md" as="p" className="w-full p-4  bg-[#fff7f9] rounded-xl">
                             <Map
-                                center={{ lat: 36, lng: 34 }}
+                                center={{ lat: storeDetail.latitude, lng: storeDetail.longitude }}
                                 style={{ width: '100%', height: '137px', borderRadius: '12px' }}
+                                draggable={false}
+                                scrollwheel={false}
                             >
-                                <ActiveMarker position={{ lat: 36, lng: 34 }} />
+                                <ActiveMarker position={{ lat: storeDetail.latitude, lng: storeDetail.longitude }} />
                             </Map>
                             <p className="body-3 flex items-center justify-start gap-2">
-                                서울특별시 마포구 합정동 427-4{' '}
+                                {storeDetail.address}
                                 <button className="text-divider-primary underline underline-offset-3">복사</button>
                             </p>
                             <div className="w-full flex items-center justify-center gap-2">
