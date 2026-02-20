@@ -70,6 +70,9 @@ export interface StoreOpeningHour {
 }
 
 export interface StoreDetail {
+    latitude: number;
+    longitude: number;
+    address: string;
     is_bookmark: boolean;
     phone: string;
     store_facility_response: StoreFacility;
