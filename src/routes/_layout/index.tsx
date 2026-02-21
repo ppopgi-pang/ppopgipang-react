@@ -1,19 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { FlexBox } from '@/components/layout/flexbox';
-import MapPage from '@/pages/maps/MapPage';
+import { createFileRoute, Navigate } from '@tanstack/react-router';
 
-
+// 홈(/)은 지도 화면(/maps)으로 리다이렉트
 export const Route = createFileRoute('/_layout/')({
-    component: RouteComponent,
+    component: () => <Navigate to="/maps" replace />,
 });
-
-function RouteComponent() {
-    return (
-        <FlexBox direction="column" justify="start" align="center" className="relative w-full h-full">
-            <header></header>
-            <main className="w-full h-full">
-                <MapPage />
-            </main>
-        </FlexBox>
-    );
-}
