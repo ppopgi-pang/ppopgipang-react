@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
 
     REVIEWS: {
         BASE: '/reviews',
-        // BY_STORE: (storeId: number) => `/stores/${storeId}/reviews`,
+        BY_STORE: (storeId: number) => `/stores/reviews/${storeId}`,
         // DETAIL: (id: number) => `/reviews/${id}`,
     },
 
