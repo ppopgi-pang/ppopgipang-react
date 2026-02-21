@@ -18,7 +18,7 @@ import { Route as LayoutFeedRouteImport } from './routes/_layout/feed'
 import { Route as LayoutChatRouteImport } from './routes/_layout/chat'
 import { Route as LayoutMapsIndexRouteImport } from './routes/_layout/maps/index'
 import { Route as AuthCallbackProviderRouteImport } from './routes/auth/callback.$provider'
-import { Route as LayoutMapsStoreIdModalRouteImport } from './routes/_layout/maps/$storeId.modal'
+import { Route as LayoutMapsStoreIdRouteImport } from './routes/_layout/maps/$storeId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -65,9 +65,9 @@ const AuthCallbackProviderRoute = AuthCallbackProviderRouteImport.update({
   path: '/auth/callback/$provider',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutMapsStoreIdModalRoute = LayoutMapsStoreIdModalRouteImport.update({
-  id: '/$storeId/modal',
-  path: '/$storeId/modal',
+const LayoutMapsStoreIdRoute = LayoutMapsStoreIdRouteImport.update({
+  id: '/$storeId',
+  path: '/$storeId',
   getParentRoute: () => LayoutMapsRoute,
 } as any)
 
@@ -79,9 +79,9 @@ export interface FileRoutesByFullPath {
   '/my': typeof LayoutMyRoute
   '/star': typeof LayoutStarRoute
   '/': typeof LayoutIndexRoute
+  '/maps/$storeId': typeof LayoutMapsStoreIdRoute
   '/auth/callback/$provider': typeof AuthCallbackProviderRoute
   '/maps/': typeof LayoutMapsIndexRoute
-  '/maps/$storeId/modal': typeof LayoutMapsStoreIdModalRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -90,9 +90,9 @@ export interface FileRoutesByTo {
   '/my': typeof LayoutMyRoute
   '/star': typeof LayoutStarRoute
   '/': typeof LayoutIndexRoute
+  '/maps/$storeId': typeof LayoutMapsStoreIdRoute
   '/auth/callback/$provider': typeof AuthCallbackProviderRoute
   '/maps': typeof LayoutMapsIndexRoute
-  '/maps/$storeId/modal': typeof LayoutMapsStoreIdModalRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -103,9 +103,9 @@ export interface FileRoutesById {
   '/_layout/my': typeof LayoutMyRoute
   '/_layout/star': typeof LayoutStarRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/maps/$storeId': typeof LayoutMapsStoreIdRoute
   '/auth/callback/$provider': typeof AuthCallbackProviderRoute
   '/_layout/maps/': typeof LayoutMapsIndexRoute
-  '/_layout/maps/$storeId/modal': typeof LayoutMapsStoreIdModalRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,9 +117,9 @@ export interface FileRouteTypes {
     | '/my'
     | '/star'
     | '/'
+    | '/maps/$storeId'
     | '/auth/callback/$provider'
     | '/maps/'
-    | '/maps/$storeId/modal'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -128,9 +128,9 @@ export interface FileRouteTypes {
     | '/my'
     | '/star'
     | '/'
+    | '/maps/$storeId'
     | '/auth/callback/$provider'
     | '/maps'
-    | '/maps/$storeId/modal'
   id:
     | '__root__'
     | '/login'
@@ -140,9 +140,9 @@ export interface FileRouteTypes {
     | '/_layout/my'
     | '/_layout/star'
     | '/_layout/'
+    | '/_layout/maps/$storeId'
     | '/auth/callback/$provider'
     | '/_layout/maps/'
-    | '/_layout/maps/$storeId/modal'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -221,24 +221,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackProviderRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout/maps/$storeId/modal': {
-      id: '/_layout/maps/$storeId/modal'
-      path: '/$storeId/modal'
-      fullPath: '/maps/$storeId/modal'
-      preLoaderRoute: typeof LayoutMapsStoreIdModalRouteImport
+    '/_layout/maps/$storeId': {
+      id: '/_layout/maps/$storeId'
+      path: '/$storeId'
+      fullPath: '/maps/$storeId'
+      preLoaderRoute: typeof LayoutMapsStoreIdRouteImport
       parentRoute: typeof LayoutMapsRoute
     }
   }
 }
 
 interface LayoutMapsRouteChildren {
+  LayoutMapsStoreIdRoute: typeof LayoutMapsStoreIdRoute
   LayoutMapsIndexRoute: typeof LayoutMapsIndexRoute
-  LayoutMapsStoreIdModalRoute: typeof LayoutMapsStoreIdModalRoute
 }
 
 const LayoutMapsRouteChildren: LayoutMapsRouteChildren = {
+  LayoutMapsStoreIdRoute: LayoutMapsStoreIdRoute,
   LayoutMapsIndexRoute: LayoutMapsIndexRoute,
-  LayoutMapsStoreIdModalRoute: LayoutMapsStoreIdModalRoute,
 }
 
 const LayoutMapsRouteWithChildren = LayoutMapsRoute._addFileChildren(

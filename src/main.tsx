@@ -1,21 +1,11 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter, createRouteMask } from '@tanstack/react-router';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
 import './styles/globals.css';
 
 import { routeTree } from './routeTree.gen';
 
-const storeDetailModalMask = createRouteMask({
-    routeTree,
-    from: '/maps/$storeId/modal',
-    to: '/maps',
-    params: true,
-});
-
-const router = createRouter({
-    routeTree,
-    routeMasks: [storeDetailModalMask],
-});
+const router = createRouter({ routeTree });
 
 declare module '@tanstack/react-router' {
     interface Register {
