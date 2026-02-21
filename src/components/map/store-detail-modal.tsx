@@ -172,7 +172,7 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
 
                 {/* 섹션들 - 항상 렌더링 */}
                 <section ref={sectionRefs.info} data-section="info" style={{ scrollMarginTop: stickyHeight }}>
-                    <StoreInfoTab storeDetail={storeDetail} />
+                    <StoreInfoTab storeDetail={storeDetail} storeName={storeSummary.name} />
                 </section>
                 <section ref={sectionRefs.visits} data-section="visits" style={{ scrollMarginTop: stickyHeight }}>
                     <VisitHistoryTab storeId={storeId} />

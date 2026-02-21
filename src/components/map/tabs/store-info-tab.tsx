@@ -1,15 +1,15 @@
-import { BookmarkIcon } from '@/assets/icons';
 import { FlexBox } from '@/components/layout/flexbox';
 import { formatPaymentMethods } from '@/utils/store/format-payment-methods';
 import type { StoreDetail } from '@/types/store/store.types';
 import { Map } from 'react-kakao-maps-sdk';
 import ActiveMarker from '../markers/active-marker';
+import { openMapDirections } from '@/utils/store/open-map-direction';
 
 interface StoreInfoTabProps {
     storeDetail: StoreDetail;
 }
 
-export default function StoreInfoTab({ storeDetail }: StoreInfoTabProps) {
+export default function StoreInfoTab({ storeDetail, storeName }: StoreInfoTabProps & { storeName: string }) {
     return (
         <FlexBox direction={'column'} gap={'md'} className="w-full px-5 py-4">
             <h3 className="title-1">가게 정보</h3>
@@ -27,8 +27,23 @@ export default function StoreInfoTab({ storeDetail }: StoreInfoTabProps) {
                     <button className="text-divider-primary underline underline-offset-3">복사</button>
                 </p>
                 <div className="w-full flex items-center justify-center gap-2">
-                    <button className="bg-white rounded-lg body-1 py-2 px-2.5 text-gray-700 flex items-center gap-2">
-                        <BookmarkIcon className="size-6" /> 즐겨찾기
+                    {/* <button
+                        className="bg-white rounded-lg body-1 py-2 px-2.5 text-gray-700 flex items-center gap-2">
+                        <BookmarkIcon className="size-6" /> 즐겨찾기 */}
+                    <button
+                        className="cursor-pointer bg-white rounded-lg body-1 py-2 px-2.5 text-gray-700 flex items-center gap-2 w-[130px]  justify-center"
+                        onClick={() =>
+                            openMapDirections(
+                                'kakao',
+                                {
+                                    lat: storeDetail.latitude,
+                                    lng: storeDetail.longitude,
+                                },
+                                storeName
+                            )
+                        }
+                    >
+                        {/* <BookmarkIcon className="size-6" /> 즐겨찾기 */} 길찾기
                     </button>
                     <button className="bg-brand-main1 bg-main-1 text-white rounded-lg body-1 py-2 px-2.5 flex-1">
                         솔직 후기 남기기
@@ -41,9 +56,7 @@ export default function StoreInfoTab({ storeDetail }: StoreInfoTabProps) {
                     <dt className="body-1">영업시간</dt>
                     <dd className="flex flex-col gap-1 body-3 text-[#000]">
                         <div className="flex items-center gap-2">
-                            <span className="text-brand-main1 bg-gray-100 px-2 py-1 rounded-full body-3">
-                                영업중
-                            </span>
+                            <span className="text-brand-main1 bg-gray-100 px-2 py-1 rounded-full body-3">영업중</span>
                             <span>오늘 오전 9시 ~ 18시</span>
                         </div>
                         <p>매일 오전 9시 ~ 18시</p>
