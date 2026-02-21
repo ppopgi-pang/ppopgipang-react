@@ -33,7 +33,9 @@ export default function MapPage() {
     const { setCenterCoordinates, setIsBoundsChanged, reset } = useMapStore();
 
     // 맵 페이지 진입 시 이전 상태 초기화 (다른 페이지에서 돌아올 때 포함)
-    useEffect(() => { reset(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        reset();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const { data, refetch } = useFetchStoresInBounds(searchBounds);
 
@@ -42,7 +44,7 @@ export default function MapPage() {
     const { isOpen: isFilterModalOpen, open: openFilterModal, close: closeFilterModal } = useModal();
 
     const handleCardClick = (store: StoreInBounds) => {
-        navigate({ to: '/maps/$storeId/modal', params: { storeId: String(store.id) } });
+        navigate({ to: '/maps/$storeId', params: { storeId: String(store.id) }, search: { tab: 'info' } });
     };
 
     const handleRefetchStore = () => {
