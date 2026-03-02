@@ -64,7 +64,7 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
         },
         // sectionRefs는 렌더마다 새 객체이나 내부 ref는 stable하므로 eslint-disable 처리
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        []
+        [],
     );
 
     // IntersectionObserver: 현재 뷰포트에 보이는 섹션으로 activeTab 동기화
@@ -85,7 +85,7 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
                 root: null,
                 rootMargin: `-${stickyHeight}px 0px -50% 0px`,
                 threshold: 0,
-            }
+            },
         );
 
         const refs = [sectionRefs.info, sectionRefs.visits, sectionRefs.reviews];
@@ -106,7 +106,7 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (isPending) {
-        return '스켈레톤';
+        return;
     }
 
     if (isError) {
@@ -179,7 +179,6 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
                 </section>
                 <section ref={sectionRefs.reviews} data-section="reviews" style={{ scrollMarginTop: stickyHeight }}>
                     <ReviewsTab storeId={storeId} />
-                    <div className="w-full h-[400px]"></div>
                 </section>
             </main>
         </FullScreenModal>
