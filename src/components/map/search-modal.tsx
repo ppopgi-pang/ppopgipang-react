@@ -6,7 +6,7 @@ import { storeService } from '@/services/store/store.service';
 import { useQuery } from '@tanstack/react-query';
 import useGeolocation from '@/hooks/map/use-user-location';
 import CircularLoadingSpinner from '../common/spinner/circular-loading-spinner';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import type { StoreSearch } from '@/types/store/store.types';
 import type { SearchStoresResponse } from '@/types/store/store.api.types';
 import { cn } from '@/libs/common/cn';
@@ -148,6 +148,8 @@ function SearchContent({
     isLoggedIn,
     // hasSubmitted,
 }: SearchContentProps) {
+    const navigate = useNavigate();
+
     if (isLoading) {
         return (
             <div className="flex py-14 items-center justify-center">
@@ -155,6 +157,10 @@ function SearchContent({
             </div>
         );
     }
+
+    const handleSearchedStoreClick = (store: StoreSearch) => {
+        navigate({ to: '/maps/$storeId', params: { storeId: String(store.id) }, search: { tab: 'info' } });
+    };
 
     if (searchResult) {
         if (sortedResults.length > 0) {
@@ -176,6 +182,9 @@ function SearchContent({
                         <ol>
                             {sortedResults.map((data) => (
                                 <li
+                                    onClick={() => {
+                                        handleSearchedStoreClick(data);
+                                    }}
                                     key={data.id}
                                     className="transition-all duration-100 cursor-pointer w-full flex items-center pl-5 pr-9 py-4 hover:bg-gray-100 gap-4"
                                 >
