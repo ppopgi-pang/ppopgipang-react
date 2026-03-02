@@ -25,6 +25,10 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
     const [activeTab, setActiveTab] = useState<TabValue>(initialTab ?? 'info');
     const isScrollingRef = useRef<boolean>(false);
 
+    // FullScreenModal 내부 스크롤 컨테이너 ref
+    // root: null(브라우저 viewport)이 아닌 실제 스크롤 컨테이너를 IntersectionObserver root로 사용
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
     const headerRef = useRef<HTMLElement>(null);
     const navRef = useRef<HTMLElement>(null);
     const [headerHeight, setHeaderHeight] = useState(0);
@@ -37,6 +41,8 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
     };
 
     // 헤더/탭 높이를 동적으로 측정 — ResizeObserver로 변화 시 자동 갱신
+    // isPending이 true일 때는 header/nav DOM이 없으므로(early return),
+    // isPending → false로 바뀌는 시점에 다시 실행해 실제 높이를 측정
     useLayoutEffect(() => {
         const updateHeights = () => {
             if (headerRef.current) setHeaderHeight(headerRef.current.offsetHeight);
@@ -47,7 +53,8 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
         if (headerRef.current) ro.observe(headerRef.current);
         if (navRef.current) ro.observe(navRef.current);
         return () => ro.disconnect();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isPending]);
 
     const stickyHeight = headerHeight + navHeight;
 
@@ -67,8 +74,13 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
         [],
     );
 
-    // IntersectionObserver: 현재 뷰포트에 보이는 섹션으로 activeTab 동기화
+    // IntersectionObserver: 스크롤 컨테이너 기준으로 보이는 섹션에 activeTab 동기화
+    // FullScreenModal이 fixed inset-0이므로 root: null(브라우저 viewport)로 관찰하면
+    // 모든 섹션이 항상 intersecting으로 감지되는 버그가 생김 → 실제 스크롤 컨테이너를 root로 사용
     useEffect(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer) return;
+
         const observer = new IntersectionObserver(
             (entries) => {
                 if (isScrollingRef.current) return;
@@ -82,7 +94,7 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
                 }
             },
             {
-                root: null,
+                root: scrollContainer,
                 rootMargin: `-${stickyHeight}px 0px -50% 0px`,
                 threshold: 0,
             },
@@ -118,7 +130,7 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
     }
 
     return (
-        <FullScreenModal>
+        <FullScreenModal ref={scrollContainerRef}>
             {/* 고정 헤더 */}
             <FlexBox ref={headerRef} align="center" justify="between" gap="sm" asChild>
                 <header className="sticky top-0 z-20 bg-white left-0 right-0 w-full px-5 py-4 border-b-2 border-gray-200">
@@ -136,15 +148,12 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
                 </FlexBox>
 
                 {/* 스티키 탭 네비게이션 */}
-                <nav
-                    ref={navRef}
-                    className="sticky z-10 bg-white w-full flex transition-all duration-200"
-                    style={{ top: headerHeight }}
-                >
+                <nav ref={navRef} className="sticky z-10 bg-white w-full flex" style={{ top: headerHeight }}>
+                    {/* 활성 탭: 브랜드 색상 텍스트 + 굵은 하단 테두리 / 비활성: 회색 텍스트 + 투명 테두리 */}
                     <button
                         type="button"
-                        className={`flex-1 p-2.5 font-semibold text-base border-b ${
-                            activeTab === 'info' ? 'border-brand-main1' : 'text-gray-400 border-gray-400'
+                        className={`flex-1 p-2.5 font-semibold text-base border-b-1 transition-colors ${
+                            activeTab === 'info' ? ' border-brand-main1' : 'text-gray-400 border-gray-400'
                         }`}
                         onClick={() => scrollToSection('info')}
                     >
@@ -152,8 +161,8 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
                     </button>
                     <button
                         type="button"
-                        className={`flex-1 p-2.5 font-semibold text-base border-b ${
-                            activeTab === 'visits' ? 'border-brand-main1' : 'text-gray-400 border-gray-400'
+                        className={`flex-1 p-2.5 font-semibold text-base border-b-1 transition-colors ${
+                            activeTab === 'visits' ? ' border-brand-main1' : 'text-gray-400 border-gray-400'
                         }`}
                         onClick={() => scrollToSection('visits')}
                     >
@@ -161,8 +170,8 @@ export default function StoreDetailModal({ storeId, initialTab, onClose }: Store
                     </button>
                     <button
                         type="button"
-                        className={`flex-1 p-2.5 font-semibold text-base border-b ${
-                            activeTab === 'reviews' ? 'border-brand-main1' : 'text-gray-400 border-gray-400'
+                        className={`flex-1 p-2.5 font-semibold text-base border-b-1 transition-colors ${
+                            activeTab === 'reviews' ? ' border-brand-main1' : 'text-gray-400 border-gray-400'
                         }`}
                         onClick={() => scrollToSection('reviews')}
                     >
