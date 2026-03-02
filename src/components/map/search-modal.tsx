@@ -9,6 +9,7 @@ import CircularLoadingSpinner from '../common/spinner/circular-loading-spinner';
 import { Link } from '@tanstack/react-router';
 import type { StoreSearch } from '@/types/store/store.types';
 import type { SearchStoresResponse } from '@/types/store/store.api.types';
+import { cn } from '@/libs/common/cn';
 
 type SortType = 'distance' | 'rating';
 
@@ -258,10 +259,11 @@ function SortButton({ label, active, onClick }: { label: string; active: boolean
                 active ? 'text-brand-main1' : 'text-gray-500 font-medium'
             }`}
         >
-            <span
-                className={`inline-block text-[12px] w-1.5 h-1.5 rounded-full shrink-0 ${
-                    active ? 'bg-brand-main1' : 'bg-gray-500'
-                }`}
+            <div
+                className={cn(
+                    'aspect-square flex size-[6px] rounded-full shrink-0',
+                    active ? 'bg-brand-main1' : 'bg-gray-500',
+                )}
             />
             {label}
         </button>
