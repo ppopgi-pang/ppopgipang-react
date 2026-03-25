@@ -10,9 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutStarRouteImport } from './routes/_layout/star'
-import { Route as LayoutMyRouteImport } from './routes/_layout/my'
+import { Route as LayoutMeRouteImport } from './routes/_layout/me'
 import { Route as LayoutMapsRouteImport } from './routes/_layout/maps'
 import { Route as LayoutFeedRouteImport } from './routes/_layout/feed'
 import { Route as LayoutChatRouteImport } from './routes/_layout/chat'
@@ -25,35 +26,39 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutIndexRoute = LayoutIndexRouteImport.update({
-  id: '/_layout/',
-  path: '/',
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
   getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutIndexRoute = LayoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutStarRoute = LayoutStarRouteImport.update({
-  id: '/_layout/star',
+  id: '/star',
   path: '/star',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutMyRoute = LayoutMyRouteImport.update({
-  id: '/_layout/my',
-  path: '/my',
-  getParentRoute: () => rootRouteImport,
+const LayoutMeRoute = LayoutMeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutMapsRoute = LayoutMapsRouteImport.update({
-  id: '/_layout/maps',
+  id: '/maps',
   path: '/maps',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutFeedRoute = LayoutFeedRouteImport.update({
-  id: '/_layout/feed',
+  id: '/feed',
   path: '/feed',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutChatRoute = LayoutChatRouteImport.update({
-  id: '/_layout/chat',
+  id: '/chat',
   path: '/chat',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutMapsIndexRoute = LayoutMapsIndexRouteImport.update({
   id: '/',
@@ -72,13 +77,13 @@ const LayoutMapsStoreIdRoute = LayoutMapsStoreIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
   '/chat': typeof LayoutChatRoute
   '/feed': typeof LayoutFeedRoute
   '/maps': typeof LayoutMapsRouteWithChildren
-  '/my': typeof LayoutMyRoute
+  '/me': typeof LayoutMeRoute
   '/star': typeof LayoutStarRoute
-  '/': typeof LayoutIndexRoute
   '/maps/$storeId': typeof LayoutMapsStoreIdRoute
   '/auth/callback/$provider': typeof AuthCallbackProviderRoute
   '/maps/': typeof LayoutMapsIndexRoute
@@ -87,7 +92,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/chat': typeof LayoutChatRoute
   '/feed': typeof LayoutFeedRoute
-  '/my': typeof LayoutMyRoute
+  '/me': typeof LayoutMeRoute
   '/star': typeof LayoutStarRoute
   '/': typeof LayoutIndexRoute
   '/maps/$storeId': typeof LayoutMapsStoreIdRoute
@@ -96,11 +101,12 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_layout': typeof LayoutRouteWithChildren
   '/login': typeof LoginRoute
   '/_layout/chat': typeof LayoutChatRoute
   '/_layout/feed': typeof LayoutFeedRoute
   '/_layout/maps': typeof LayoutMapsRouteWithChildren
-  '/_layout/my': typeof LayoutMyRoute
+  '/_layout/me': typeof LayoutMeRoute
   '/_layout/star': typeof LayoutStarRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/maps/$storeId': typeof LayoutMapsStoreIdRoute
@@ -110,13 +116,13 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/login'
     | '/chat'
     | '/feed'
     | '/maps'
-    | '/my'
+    | '/me'
     | '/star'
-    | '/'
     | '/maps/$storeId'
     | '/auth/callback/$provider'
     | '/maps/'
@@ -125,7 +131,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/chat'
     | '/feed'
-    | '/my'
+    | '/me'
     | '/star'
     | '/'
     | '/maps/$storeId'
@@ -133,11 +139,12 @@ export interface FileRouteTypes {
     | '/maps'
   id:
     | '__root__'
+    | '/_layout'
     | '/login'
     | '/_layout/chat'
     | '/_layout/feed'
     | '/_layout/maps'
-    | '/_layout/my'
+    | '/_layout/me'
     | '/_layout/star'
     | '/_layout/'
     | '/_layout/maps/$storeId'
@@ -146,13 +153,8 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  LayoutRoute: typeof LayoutRouteWithChildren
   LoginRoute: typeof LoginRoute
-  LayoutChatRoute: typeof LayoutChatRoute
-  LayoutFeedRoute: typeof LayoutFeedRoute
-  LayoutMapsRoute: typeof LayoutMapsRouteWithChildren
-  LayoutMyRoute: typeof LayoutMyRoute
-  LayoutStarRoute: typeof LayoutStarRoute
-  LayoutIndexRoute: typeof LayoutIndexRoute
   AuthCallbackProviderRoute: typeof AuthCallbackProviderRoute
 }
 
@@ -165,47 +167,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout/': {
       id: '/_layout/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof LayoutRoute
     }
     '/_layout/star': {
       id: '/_layout/star'
       path: '/star'
       fullPath: '/star'
       preLoaderRoute: typeof LayoutStarRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof LayoutRoute
     }
-    '/_layout/my': {
-      id: '/_layout/my'
-      path: '/my'
-      fullPath: '/my'
-      preLoaderRoute: typeof LayoutMyRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_layout/me': {
+      id: '/_layout/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof LayoutMeRouteImport
+      parentRoute: typeof LayoutRoute
     }
     '/_layout/maps': {
       id: '/_layout/maps'
       path: '/maps'
       fullPath: '/maps'
       preLoaderRoute: typeof LayoutMapsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof LayoutRoute
     }
     '/_layout/feed': {
       id: '/_layout/feed'
       path: '/feed'
       fullPath: '/feed'
       preLoaderRoute: typeof LayoutFeedRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof LayoutRoute
     }
     '/_layout/chat': {
       id: '/_layout/chat'
       path: '/chat'
       fullPath: '/chat'
       preLoaderRoute: typeof LayoutChatRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof LayoutRoute
     }
     '/_layout/maps/': {
       id: '/_layout/maps/'
@@ -245,14 +254,30 @@ const LayoutMapsRouteWithChildren = LayoutMapsRoute._addFileChildren(
   LayoutMapsRouteChildren,
 )
 
-const rootRouteChildren: RootRouteChildren = {
-  LoginRoute: LoginRoute,
+interface LayoutRouteChildren {
+  LayoutChatRoute: typeof LayoutChatRoute
+  LayoutFeedRoute: typeof LayoutFeedRoute
+  LayoutMapsRoute: typeof LayoutMapsRouteWithChildren
+  LayoutMeRoute: typeof LayoutMeRoute
+  LayoutStarRoute: typeof LayoutStarRoute
+  LayoutIndexRoute: typeof LayoutIndexRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutChatRoute: LayoutChatRoute,
   LayoutFeedRoute: LayoutFeedRoute,
   LayoutMapsRoute: LayoutMapsRouteWithChildren,
-  LayoutMyRoute: LayoutMyRoute,
+  LayoutMeRoute: LayoutMeRoute,
   LayoutStarRoute: LayoutStarRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  LayoutRoute: LayoutRouteWithChildren,
+  LoginRoute: LoginRoute,
   AuthCallbackProviderRoute: AuthCallbackProviderRoute,
 }
 export const routeTree = rootRouteImport

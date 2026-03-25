@@ -12,7 +12,7 @@ export const MAIN_NAV_CONFIG = [
     { to: '/feed', icon: FeedIcon, label: '피드' },
     { to: '/star', icon: StarIcon, label: '즐겨찾기' },
     { to: '/chat', icon: ChatIcon, label: '채팅' },
-    { to: '/my', icon: MyIcon, label: '마이페이지' },
+    { to: '/me', icon: MyIcon, label: '마이페이지' },
 ] as const;
 
 const BOTTOM_NAV_STYLES = {
@@ -72,7 +72,7 @@ function NavItem({ to, icon, label, exact = false }: NavItemProps) {
             to={to}
             className={cn(
                 BOTTOM_NAV_STYLES.item.base,
-                isActive ? BOTTOM_NAV_STYLES.item.active : BOTTOM_NAV_STYLES.item.inactive
+                isActive ? BOTTOM_NAV_STYLES.item.active : BOTTOM_NAV_STYLES.item.inactive,
             )}
             aria-label={label || to}
             aria-current={isActive ? 'page' : undefined}
