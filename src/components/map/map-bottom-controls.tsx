@@ -10,6 +10,7 @@ interface MapBottomControlsProps {
     userLocation: Coordinates;
     // 매장 목록 다시 불러오기
     onRefetch: () => void;
+    onOpenBottomSheet: () => void;
 }
 
 /**
@@ -17,7 +18,12 @@ interface MapBottomControlsProps {
  * - 좌: 목록보기 (현재 영역의 매장 수 표시)
  * - 우: 위치 재설정 (사용자 현재 위치로 지도 이동)
  */
-export default function MapBottomControls({ storeCount, userLocation, onRefetch }: MapBottomControlsProps) {
+export default function MapBottomControls({
+    storeCount,
+    userLocation,
+    onRefetch,
+    onOpenBottomSheet,
+}: MapBottomControlsProps) {
     const { clearSelection, setCenterCoordinates, setIsBoundsChanged } = useMapStore();
 
     // 위치 재설정: 사용자 위치로 지도 복귀, 선택 초기화, 재검색
@@ -31,6 +37,7 @@ export default function MapBottomControls({ storeCount, userLocation, onRefetch 
     return (
         <FlexBox justify={'between'} align={'center'} className="w-full px-5">
             <button
+                onClick={onOpenBottomSheet}
                 type="button"
                 className="flex items-center p-2 gap-2 text-gray-700 text-base bg-white rounded-xl cursor-pointer leading-none"
             >

@@ -4,9 +4,10 @@ import VisitCertificationButton from '../buttons/visit-certification-button';
 
 interface VisitHistoryTabProps {
     storeId: number;
+    onCertify: () => void;
 }
 
-export default function VisitHistoryTab({ storeId: storeId }: VisitHistoryTabProps) {
+export default function VisitHistoryTab({ storeId, onCertify }: VisitHistoryTabProps) {
     if (!storeId) return null;
     return (
         <FlexBox direction={'column'} className="w-full px-5 py-4" gap="md">
@@ -22,7 +23,7 @@ export default function VisitHistoryTab({ storeId: storeId }: VisitHistoryTabPro
                         <ActiveMarker className="w-4" />
                         <p className="body-3 text-nowrap">000님은 이번 달에 총 5번 방문했어요!</p>
                     </div>
-                    <VisitCertificationButton />
+                    <VisitCertificationButton onClick={onCertify} />
                 </FlexBox>
             </FlexBox>
         </FlexBox>
