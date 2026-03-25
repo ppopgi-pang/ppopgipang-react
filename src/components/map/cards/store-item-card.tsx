@@ -3,8 +3,20 @@ import VisitCertificationButton from '@/components/map/buttons/visit-certificati
 import { FlexBox } from '@/components/layout/flexbox';
 import { cn } from '@/libs/common/cn';
 import type { StoreInBounds } from '@/types/store/store.types';
+import { useNavigate } from '@tanstack/react-router';
 
 export default function StoreItemCard({ store, isActive }: { store: StoreInBounds; isActive: boolean }) {
+    const navigate = useNavigate();
+
+    // VisitCertificationButton 내부에서 stopPropagation 처리 — SwiperSlide 클릭과 분리됨
+    const handleCertify = () => {
+        navigate({
+            to: '/maps/$storeId',
+            params: { storeId: String(store.id) },
+            search: { visit: true },
+        });
+    };
+
     return (
         <div
             key={store.id}
@@ -28,7 +40,7 @@ export default function StoreItemCard({ store, isActive }: { store: StoreInBound
                     </FlexBox>
                 </FlexBox>
 
-                <VisitCertificationButton />
+                <VisitCertificationButton onClick={handleCertify} />
             </FlexBox>
 
             {store.recent_review && (

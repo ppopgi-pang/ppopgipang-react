@@ -32,7 +32,10 @@ export const API_ENDPOINTS = {
         BY_STORE: (storeId: number) => `/stores/reviews/${storeId}`,
         // DETAIL: (id: number) => `/reviews/${id}`,
     },
-
+    CERTIFICATIONS: {
+        BASE: '/certifications',
+        CHECK_IN: () => `/certifications/checkin`,
+    },
     USER: {
         // PROFILE: '/user/profile',
         // FAVORITES: '/user/favorites',
@@ -65,8 +68,14 @@ export const QUERY_KEYS = {
         ALL: ['reviews'] as const,
         BY_STORE: (storeId: number) => ['reviews', 'by-store', storeId] as const,
     },
+    ME: {
+        ALL: ['me'],
+        PROFILE: ['me', 'profile'] as const,
+        FAVORITES: ['me', 'favorites'] as const,
+    },
     USER: {
-        PROFILE: ['user', 'profile'] as const,
+        ALL: ['user'],
+        MY_PROFILE: ['user', 'profile'] as const,
         FAVORITES: ['user', 'favorites'] as const,
     },
 } as const;

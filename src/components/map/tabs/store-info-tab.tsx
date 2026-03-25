@@ -1,30 +1,42 @@
 import { FlexBox } from '@/components/layout/flexbox';
 import { formatPaymentMethods } from '@/utils/store/format-payment-methods';
 import type { StoreDetail } from '@/types/store/store.types';
-import { Map } from 'react-kakao-maps-sdk';
-import ActiveMarker from '../markers/active-marker';
+import LocationPreviewMap from '../location-preview-map';
 import { openMapDirections } from '@/utils/store/open-map-direction';
+import { toast } from 'sonner';
 
 interface StoreInfoTabProps {
     storeDetail: StoreDetail;
 }
 
 export default function StoreInfoTab({ storeDetail, storeName }: StoreInfoTabProps & { storeName: string }) {
+    const handleCopy = async (textToCopy: string) => {
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            toast.success('복사가 완료되었습니다');
+        } catch {
+            toast.error('텍스트 복사에 실패했습니다');
+        }
+    };
+
     return (
         <FlexBox direction={'column'} gap={'md'} className="w-full px-5 py-4">
             <h3 className="title-1">가게 정보</h3>
             <FlexBox direction={'column'} gap="md" as="p" className="w-full p-4  bg-[#fff7f9] rounded-xl">
-                <Map
-                    center={{ lat: storeDetail.latitude, lng: storeDetail.longitude }}
-                    style={{ width: '100%', height: '137px', borderRadius: '12px' }}
-                    draggable={false}
-                    scrollwheel={false}
-                >
-                    <ActiveMarker position={{ lat: storeDetail.latitude, lng: storeDetail.longitude }} />
-                </Map>
-                <p className="body-3 flex items-center justify-start gap-2">
-                    {storeDetail.address}
-                    <button className="text-divider-primary underline underline-offset-3">복사</button>
+                <LocationPreviewMap
+                    latitude={storeDetail.latitude}
+                    longitude={storeDetail.longitude}
+                    wheelScrollable
+                    draggable
+                />
+                <p className="body-3 flex items-center justify-between gap-2 pr-10 w-full">
+                    <span className="flex-nowrap break-keep">{storeDetail.address}</span>
+                    <button
+                        onClick={() => handleCopy(storeDetail.address)}
+                        className="text-divider-primary underline underline-offset-3 cursor-pointer hover:text-divider-primary/75 shrink-0"
+                    >
+                        복사
+                    </button>
                 </p>
                 <div className="w-full flex items-center justify-center gap-2">
                     {/* <button
@@ -39,7 +51,7 @@ export default function StoreInfoTab({ storeDetail, storeName }: StoreInfoTabPro
                                     lat: storeDetail.latitude,
                                     lng: storeDetail.longitude,
                                 },
-                                storeName
+                                storeName,
                             )
                         }
                     >
