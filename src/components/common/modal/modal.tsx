@@ -2,7 +2,7 @@ import { ZINDEX } from '@/constants/z-index';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-interface ModalProps {
+export interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     title?: string;
@@ -33,7 +33,7 @@ const Modal = ({ isOpen, onClose, title, children, zIndex }: ModalProps) => {
                 </footer>
             </div>
         </div>,
-        document.body
+        document.body,
     );
 };
 
