@@ -20,7 +20,10 @@ import { useCenterCoordinates, useIsBoundsChanged, useMapStore } from '@/stores/
 import type { StoreInBounds } from '@/types/store/store.types';
 import { useEffect } from 'react';
 import { Map } from 'react-kakao-maps-sdk';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { BottomSheet } from '@/components/ui/BottomSheet';
+import VisitCertificationButton from '@/components/map/buttons/visit-certification-button';
+import StoreRating from '@/components/common/store-rating';
 
 export default function MapPage() {
     const navigate = useNavigate();
@@ -41,6 +44,7 @@ export default function MapPage() {
 
     // 로컬 모달 상태 (MapPage 내부에서만 사용)
     const { isOpen, open, close } = useModal();
+    const { isOpen: isBottomSheetOpen, open: openBottomSheet, close: closeBottomSheet } = useModal();
     const { isOpen: isFilterModalOpen, open: openFilterModal, close: closeFilterModal } = useModal();
 
     const handleCardClick = (store: StoreInBounds) => {
@@ -142,6 +146,7 @@ export default function MapPage() {
                     storeCount={data?.length ?? 0}
                     userLocation={userLocation}
                     onRefetch={() => refetch()}
+                    onOpenBottomSheet={openBottomSheet}
                 />
                 <div className="w-full flex items-center gap-2">
                     <FlexBox direction="row" gap="md" className="w-full">
@@ -149,6 +154,42 @@ export default function MapPage() {
                     </FlexBox>
                 </div>
             </FlexBox>
+            <BottomSheet isOpen={isBottomSheetOpen} onClose={closeBottomSheet}>
+                {() => (
+                    <FlexBox direction={'column'} className="w-full h-full" as="section">
+                        {data && (
+                            <FlexBox direction={'column'} className="w-full h-full gap-4" as="ol">
+                                {data.map((store) => (
+                                    <Link
+                                        to="/maps/$storeId"
+                                        params={{ storeId: store.id.toString() }}
+                                        className="w-full"
+                                    >
+                                        <FlexBox align={'center'} justify={'between'} className="w-full p-2" as="li">
+                                            <FlexBox direction={'column'}>
+                                                <h3 className="body-2">{store.name}</h3>
+                                                <StoreRating
+                                                    averageRating={store.average_rating}
+                                                    reviewCount={store.review_count}
+                                                />
+                                            </FlexBox>
+                                            <VisitCertificationButton
+                                                onClick={() => {
+                                                    navigate({
+                                                        to: '/maps/$storeId',
+                                                        params: { storeId: String(store.id) },
+                                                        search: { visit: true },
+                                                    });
+                                                }}
+                                            />
+                                        </FlexBox>
+                                    </Link>
+                                ))}
+                            </FlexBox>
+                        )}
+                    </FlexBox>
+                )}
+            </BottomSheet>
         </div>
     );
 }
