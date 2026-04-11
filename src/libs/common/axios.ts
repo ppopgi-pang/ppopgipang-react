@@ -1,4 +1,7 @@
+import { API_ENDPOINTS } from '@/constants/api';
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
+
+axios.defaults.withCredentials = true;
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -6,11 +9,22 @@ const api = axios.create({
     withCredentials: true,
 });
 
-const PUBLIC_URLS = ['/auth/refresh'];
+// 로그 스킵용 (request interceptor)
+const NO_LOG_URLS = ['/auth/refresh'];
 
-const isPublicUrl = (url?: string) => {
+// 401 발생 시 토큰 갱신을 시도하지 않을 URL 목록
+// - /auth/refresh: 갱신 자체 엔드포인트
+// - /users/me: 인증 상태 확인 전용 (401 = 비로그인 의미, 갱신 대상 아님)
+const SKIP_REFRESH_URLS = ['/auth/refresh'];
+
+const isNoLogUrl = (url?: string) => {
     if (!url) return false;
-    return PUBLIC_URLS.some((publicUrl) => url.includes(publicUrl));
+    return NO_LOG_URLS.some((u) => url.includes(u));
+};
+
+const shouldSkipRefresh = (url?: string) => {
+    if (!url) return false;
+    return SKIP_REFRESH_URLS.some((u) => url.includes(u));
 };
 
 let refreshTokenPromise: Promise<void> | null = null;
@@ -30,8 +44,9 @@ const refreshAccessToken = async (): Promise<void> => {
     }
 
     refreshTokenPromise = (async () => {
+        const url = (import.meta.env.VITE_API_URL || 'https://api.ppopgi.me/api/v1') + API_ENDPOINTS.AUTH.REFRESH;
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/auth/refresh`, {}, { withCredentials: true });
+            await axios.post(url, {}, { withCredentials: true });
 
             // 성공 시 카운터 리셋
             refreshFailCount = 0;
@@ -49,17 +64,13 @@ const refreshAccessToken = async (): Promise<void> => {
 // Request Interceptor
 api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-        if (isPublicUrl(config.url)) {
-            return config;
-        }
-
-        if (import.meta.env.DEV) {
+        if (import.meta.env.DEV && !isNoLogUrl(config.url)) {
             console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
         }
 
         return config;
     },
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(error),
 );
 
 // Response Interceptor
@@ -68,7 +79,7 @@ api.interceptors.response.use(
         if (import.meta.env.DEV) {
             console.log(
                 `[API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`,
-                response.status
+                response.status,
             );
         }
         return response;
@@ -79,21 +90,18 @@ api.interceptors.response.use(
         };
 
         // 401 에러 처리
-        if (error.response?.status === 401 && !originalRequest._retry && !isPublicUrl(originalRequest.url)) {
+        // shouldSkipRefresh 대상(예: /users/me)은 토큰 갱신 없이 그대로 reject
+        // → use-me.ts에서 401을 "비로그인"으로 처리하는 로직이 정상 동작
+        if (error.response?.status === 401 && !originalRequest._retry && !shouldSkipRefresh(originalRequest.url)) {
             originalRequest._retry = true;
 
             try {
                 await refreshAccessToken();
                 return api(originalRequest);
             } catch (refreshError) {
-                if (typeof window !== 'undefined') {
-                    window.dispatchEvent(new Event('auth:token-expired'));
-
-                    // 현재 경로 저장 (로그인 후 돌아오기 위해)
-                    sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
-
-                    window.location.href = '/login';
-                }
+                // 리다이렉트 없이 토큰 만료 이벤트만 발행
+                // → AuthProvider에서 수신해 비로그인 상태로 전환
+                window.dispatchEvent(new Event('auth:token-expired'));
                 return Promise.reject(refreshError);
             }
         }
@@ -103,7 +111,7 @@ api.interceptors.response.use(
         }
 
         return Promise.reject(error);
-    }
+    },
 );
 
 export default api;
