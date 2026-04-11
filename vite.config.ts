@@ -4,9 +4,15 @@ import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import path from 'path';
-import basicSsl from '@vitejs/plugin-basic-ssl';
+import fs from 'fs';
 
 export default defineConfig({
+    server: {
+        https: {
+            key: fs.readFileSync(path.resolve(__dirname, 'key.pem')),
+            cert: fs.readFileSync(path.resolve(__dirname, 'cert.pem')),
+        },
+    },
     plugins: [
         tanstackRouter({
             target: 'react',
@@ -20,7 +26,6 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
-        basicSsl(),
     ],
     resolve: {
         alias: {
