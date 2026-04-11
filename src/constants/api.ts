@@ -36,10 +36,14 @@ export const API_ENDPOINTS = {
         BASE: '/certifications',
         CHECK_IN: () => `/certifications/checkin`,
     },
-    USER: {
+    USERS: {
+        ME: '/users/me',
         // PROFILE: '/user/profile',
         // FAVORITES: '/user/favorites',
     },
+    AUTH : {
+        REFRESH: '/auth/refresh',
+    }
 } as const;
 
 /**
@@ -69,7 +73,7 @@ export const QUERY_KEYS = {
         BY_STORE: (storeId: number) => ['reviews', 'by-store', storeId] as const,
     },
     ME: {
-        ALL: ['me'],
+        ALL: ['me'] as const,
         PROFILE: ['me', 'profile'] as const,
         FAVORITES: ['me', 'favorites'] as const,
     },
