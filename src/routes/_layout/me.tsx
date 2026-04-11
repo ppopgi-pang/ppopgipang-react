@@ -12,7 +12,7 @@ export const Route = createFileRoute('/_layout/me')({
 
 function RouteComponent() {
     const router = useRouter();
-    const { isAuthenticated, user, isLoading } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
     const { data: me, isPending, error, isError } = useMe();
 
     if (isPending || isLoading) {
@@ -25,7 +25,7 @@ function RouteComponent() {
     return (
         <FlexBox direction="column" justify="start" align="center" className="relative w-full h-full">
             <BackButtonHeader onBack={() => router.history.back()} title="마이페이지" />
-            {isAuthenticated ? <div>로그인 완료!</div> : <LoginPrompt />}
+            {isAuthenticated ? <div>{me?.nickname}님, 안녕하세요!</div> : <LoginPrompt />}
         </FlexBox>
     );
 }
