@@ -3,7 +3,6 @@ import { LogoImg } from '@/assets/images';
 import { Link } from '@tanstack/react-router';
 
 const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID ?? '';
-
 const API_SERVER_URL = import.meta.env.VITE_API_URL;
 
 const getKakaoLoginUrl = () => {
