@@ -6,13 +6,17 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import path from 'path';
 import fs from 'fs';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 export default defineConfig({
-    server: {
-        https: {
-            key: fs.readFileSync(path.resolve(__dirname, 'key.pem')),
-            cert: fs.readFileSync(path.resolve(__dirname, 'cert.pem')),
-        },
-    },
+    server: isDev
+        ? {
+              https: {
+                  key: fs.readFileSync(path.resolve(__dirname, 'key.pem')),
+                  cert: fs.readFileSync(path.resolve(__dirname, 'cert.pem')),
+              },
+          }
+        : undefined,
     plugins: [
         tanstackRouter({
             target: 'react',
