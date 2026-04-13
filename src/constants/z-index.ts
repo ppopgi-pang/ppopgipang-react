@@ -15,7 +15,8 @@ const MODAL_DIMMED_LAYER = BOTTOM_SHEET + ABOVE; // 8 - 일반 모달 backdrop
 const MODAL_CONTAINER = MODAL_DIMMED_LAYER + ABOVE; // 9 - 일반 모달 본체
 const FULLSCREEN_MODAL = MODAL_CONTAINER + ABOVE; // 10 - 풀스크린 모달
 const VISIT_CERTIFICATION_MODAL = FULLSCREEN_MODAL + ABOVE; // 11 - 방문인증 모달 (풀스크린 모달 위)
-const TOAST = VISIT_CERTIFICATION_MODAL + ABOVE; // 12 - 토스트 알림 (최상위)
+const CHECK_IN_SUCCESS_MODAL = VISIT_CERTIFICATION_MODAL + ABOVE; // 12 - 방문인증 성공 모달 (방문인증 모달 위)
+const TOAST = CHECK_IN_SUCCESS_MODAL + ABOVE; // 13 - 토스트 알림 (최상위)
 
 export const ZINDEX = {
     map: MAP,
@@ -32,6 +33,7 @@ export const ZINDEX = {
     modalContainer: MODAL_CONTAINER,
     fullscreenModal: FULLSCREEN_MODAL,
     visitCertificationModal: VISIT_CERTIFICATION_MODAL,
+    checkInSuccessModal: CHECK_IN_SUCCESS_MODAL,
     toast: TOAST,
 } as const;
 

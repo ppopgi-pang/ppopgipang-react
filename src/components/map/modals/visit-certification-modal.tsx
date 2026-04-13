@@ -8,6 +8,10 @@ import { useStoreImages } from '@/hooks/queries/common/use-store-images';
 import LocationPreviewMap from '../location-preview-map';
 import { useFetchStorePageData } from '@/hooks/queries/stores/use-fetch-store-page-data';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/providers/auth-provider';
+import useCheckInMutation from '@/hooks/queries/certifications/use-check-in-mutation';
+import CheckInSuccessModal from './check-in-success-modal';
+import { useState } from 'react';
 
 interface VisitCertificationModalProps {
     onClose: () => void;
@@ -22,6 +26,27 @@ export default function VisitCertificationModal({ onClose }: VisitCertificationM
     const { storeId } = useParams({ from: '/_layout/maps/$storeId' });
     const { storeDetail, storeSummary, isPending } = useFetchStorePageData(Number(storeId));
     const { imageUrls } = useStoreImages(storeSummary?.image_names ?? [], { enabled: !!storeSummary });
+    const { isAuthenticated } = useAuth();
+
+    // 성공 모달 표시 여부 — 백드롭 클릭으로 닫을 수 있음
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [certifiedAt] = useState(() => new Date());
+
+    const { mutate: checkIn, isSuccess } = useCheckInMutation({
+        storeId: Number(storeId),
+        latitude: storeDetail?.latitude ?? 0,
+        longitude: storeDetail?.longitude ?? 0,
+    });
+
+    const submitVisitCertification = () => {
+        if (!isAuthenticated) {
+            alert('로그인이 필요한 서비스입니다.');
+            return;
+        }
+        checkIn(undefined, {
+            onSuccess: () => setIsSuccessModalOpen(true),
+        });
+    };
 
     if (isPending) {
         return <div></div>;
@@ -47,7 +72,7 @@ export default function VisitCertificationModal({ onClose }: VisitCertificationM
                     </header>
                 </FlexBox>
 
-                <main className="flex-1 flex flex-col items-center bg-bg-primary px-5 pt-10 gap-4">
+                <main className="relative flex-1 flex flex-col items-center bg-bg-primary px-5 pt-10 gap-4">
                     <p className="  text-center text-lg">
                         <span className="font-bold">매장 근처</span>에서 <br />
                         방문 인증을 할 수 있어요
@@ -67,11 +92,24 @@ export default function VisitCertificationModal({ onClose }: VisitCertificationM
                             <Button variant={'secondary'} size={'lg'} className="w-[124px]">
                                 직접 검색
                             </Button>
-                            <Button variant={'default'} size={'lg'} className="flex-1" onClick={() => {}}>
-                                위치로 방문인증
+                            <Button
+                                variant={'default'}
+                                size={'lg'}
+                                className="flex-1"
+                                onClick={submitVisitCertification}
+                                disabled={isSuccess}
+                            >
+                                {isSuccess ? '방문인증 완료' : '위치로 방문인증'}
                             </Button>
                         </FlexBox>
                     </FlexBox>
+                    {isSuccessModalOpen && (
+                        <CheckInSuccessModal
+                            certificationCount={129}
+                            certifiedAt={certifiedAt}
+                            onClose={() => setIsSuccessModalOpen(false)}
+                        />
+                    )}
                 </main>
             </div>
         </div>,
