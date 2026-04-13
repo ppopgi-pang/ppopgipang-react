@@ -7,10 +7,12 @@ import type { VariantProps } from 'class-variance-authority';
 // FlexBox variant 타입
 type FlexBoxVariants = VariantProps<typeof flexBoxVariants>;
 
-// 기본 FlexBox Props
-interface BaseFlexBoxProps extends FlexBoxVariants {
+// 기본 FlexBox Props — gap은 숫자(px)도 허용
+interface BaseFlexBoxProps extends Omit<FlexBoxVariants, 'gap'> {
     className?: string;
     asChild?: boolean;
+    /** named variant("sm", "md" 등) 또는 px 단위 숫자(예: 32 → "32px") */
+    gap?: FlexBoxVariants['gap'] | number;
 }
 
 // 제네릭 타입 정의
@@ -24,7 +26,7 @@ type PolymorphicRef<T extends ElementType> = ComponentPropsWithoutRef<T>['ref'];
 
 // Polymorphic Component 타입 (displayName 포함)
 type PolymorphicFlexBox = <T extends ElementType = 'div'>(
-    props: FlexBoxProps<T> & { ref?: PolymorphicRef<T> }
+    props: FlexBoxProps<T> & { ref?: PolymorphicRef<T> },
 ) => React.ReactElement | null;
 
 /**
@@ -55,30 +57,35 @@ const FlexBoxComponent = forwardRef(
             fullHeight,
             ...props
         }: FlexBoxProps<T>,
-        ref: PolymorphicRef<T>
+        ref: PolymorphicRef<T>,
     ) => {
         // asChild가 true면 Slot 사용, 아니면 as prop 또는 기본 'div' 사용
         const Component = asChild ? Slot : as || 'div';
 
+        // 숫자 gap은 인라인 스타일로 적용, 문자열 variant는 CVA에 전달
+        const numericGap = typeof gap === 'number' ? gap : undefined;
+        const variantGap = typeof gap !== 'number' ? gap : undefined;
+
         return (
             <Component
                 ref={ref}
+                style={numericGap !== undefined ? { gap: `${numericGap}px`, ...((props as { style?: React.CSSProperties }).style ?? {}) } : undefined}
                 className={cn(
                     flexBoxVariants({
                         direction,
                         justify,
                         align,
-                        gap,
+                        gap: variantGap,
                         wrap,
                         fullWidth,
                         fullHeight,
                     }),
-                    className
+                    className,
                 )}
                 {...props}
             />
         );
-    }
+    },
 ) as PolymorphicFlexBox & { displayName?: string };
 
 FlexBoxComponent.displayName = 'FlexBox';
