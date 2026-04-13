@@ -1,5 +1,6 @@
 import { ListIcon, LocationIcon } from '@/assets/icons';
 import { FlexBox } from '@/components/layout/flexbox';
+import useGeolocation from '@/hooks/map/use-current-location';
 import { useMapStore } from '@/stores/use-map-store';
 import type { Coordinates } from '@/types/map/map.types';
 
@@ -25,9 +26,11 @@ export default function MapBottomControls({
     onOpenBottomSheet,
 }: MapBottomControlsProps) {
     const { clearSelection, setCenterCoordinates, setIsBoundsChanged } = useMapStore();
+    const { refetch } = useGeolocation();
 
     // 위치 재설정: 사용자 위치로 지도 복귀, 선택 초기화, 재검색
     const handleLocationReset = () => {
+        refetch(); // 위치 정보 새로고침
         setIsBoundsChanged(false);
         setCenterCoordinates(userLocation);
         clearSelection();

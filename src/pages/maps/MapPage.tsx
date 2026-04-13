@@ -27,7 +27,7 @@ import StoreRating from '@/components/common/store-rating';
 
 export default function MapPage() {
     const navigate = useNavigate();
-    const { loading, error, location: userLocation } = useGeolocation();
+    const { isLoading: loading, error, location: userLocation } = useGeolocation();
     const { updateCurrentBounds, searchBounds, commitSearchBounds, initializeSearchBounds } = useMapBounds();
 
     // 지도 관련 전역 상태
