@@ -29,6 +29,7 @@ interface StoreSwiperProps {
 function StoreSwiper({ storeItems, initialSelectedId, filter, onCardClick }: StoreSwiperProps) {
     const selectedStoreId = useSelectedStoreId();
     const selectStore = useMapStore((s) => s.selectStore);
+    const setPanTarget = useMapStore((s) => s.setPanTarget);
     const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
     const isProgrammaticSlideRef = useRef(false);
 
@@ -50,7 +51,8 @@ function StoreSwiper({ storeItems, initialSelectedId, filter, onCardClick }: Sto
         }
         const activeStore = sortedStores[swiper.activeIndex];
         if (activeStore && activeStore.id !== selectedStoreId) {
-            selectStore(activeStore);
+            selectStore(activeStore.id);
+            setPanTarget({ lat: activeStore.latitude, lng: activeStore.longitude });
         }
     };
 
@@ -91,7 +93,8 @@ function StoreSwiper({ storeItems, initialSelectedId, filter, onCardClick }: Sto
                         if (selectedStoreId === store.id) {
                             onCardClick?.(store);
                         } else {
-                            selectStore(store);
+                            selectStore(store.id);
+                            setPanTarget({ lat: store.latitude, lng: store.longitude });
                         }
                     }}
                 >

@@ -12,6 +12,16 @@ export default function StoreMarkers({ stores }: StoreMarkersProps) {
     // 선택된 매장 ID만 구독 (다른 상태 변경 시 리렌더 방지)
     const selectedStoreId = useSelectedStoreId();
     const selectStore = useMapStore((s) => s.selectStore);
+    const setPanTarget = useMapStore((s) => s.setPanTarget);
+
+    const handleMarkerClick = (store: StoreInBounds) => {
+        const isDeselect = selectedStoreId === store.id;
+        selectStore(store.id);
+        // 새 매장 선택 시에만 지도 이동, 해제 시에는 지도 그대로
+        if (!isDeselect) {
+            setPanTarget({ lat: store.latitude, lng: store.longitude });
+        }
+    };
 
     return (
         <>
@@ -23,9 +33,9 @@ export default function StoreMarkers({ stores }: StoreMarkersProps) {
                 const isSelected = selectedStoreId === store.id;
 
                 return isSelected ? (
-                    <ActiveMarker key={store.id} onClick={() => selectStore(store)} position={position} />
+                    <ActiveMarker key={store.id} onClick={() => handleMarkerClick(store)} position={position} />
                 ) : (
-                    <DefaultMarker key={store.id} position={position} onClick={() => selectStore(store)} />
+                    <DefaultMarker key={store.id} position={position} onClick={() => handleMarkerClick(store)} />
                 );
             })}
         </>
