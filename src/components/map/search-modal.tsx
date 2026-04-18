@@ -4,12 +4,13 @@ import { FlexBox } from '../layout/flexbox';
 import { ClockIcon, CloseIcon, LeftArrowIcon, StarIcon } from '@/assets/icons';
 import { storeService } from '@/services/store/store.service';
 import { useQuery } from '@tanstack/react-query';
-import useGeolocation from '@/hooks/map/use-user-location';
+import { useUserCoordinates } from '@/stores/use-user-location-store';
 import CircularLoadingSpinner from '../common/spinner/circular-loading-spinner';
 import { Link, useNavigate } from '@tanstack/react-router';
 import type { StoreSearch } from '@/types/store/store.types';
 import type { SearchStoresResponse } from '@/types/store/store.api.types';
 import { cn } from '@/libs/common/cn';
+import { useAuth } from '@/providers/auth-provider';
 
 type SortType = 'distance' | 'rating';
 
@@ -24,8 +25,6 @@ export default function SearchModal({ prevText, onClose }: SearchModalProps) {
     const [sortType, setSortType] = useState<SortType>('distance'); // 정렬 타입
     const inputRef = useRef<HTMLInputElement>(null); // 포커싱을 위한 ref
 
-    const isLoggedIn = false; // TODO: 실제 로그인 여부로 바꿔야 함
-
     // 초기 렌더링 시에 포커싱
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -35,12 +34,8 @@ export default function SearchModal({ prevText, onClose }: SearchModalProps) {
         return () => clearTimeout(timer);
     }, []);
 
-    // 사용자 위치
-    const { coordinates: userLocation } = useGeolocation({
-        watch: false,
-        enableHighAccuracy: false,
-        maximumAge: 300000,
-    });
+    // 사용자 위치 — MapPage가 진입 시 fetchLocation을 호출하므로 스토어에서 바로 읽기
+    const userLocation = useUserCoordinates();
 
     // search 관련 훅
     const {
@@ -91,27 +86,31 @@ export default function SearchModal({ prevText, onClose }: SearchModalProps) {
                     handleSearch();
                 }}
             >
-                <FlexBox align="center" justify="between" asChild gap="sm">
-                    <header className="w-full px-5 py-2.5 border-b-2 border-gray-200">
-                        <button onClick={onClose} type="button" className="cursor-pointer">
-                            <LeftArrowIcon className="h-5" />
-                        </button>
-                        <input
-                            ref={inputRef}
-                            type="search"
-                            value={inputText}
-                            onChange={(e) => setInputText(e.target.value)}
-                            placeholder="지역명, 가게명 검색"
-                            className="border-2 border-transparent focus-within:border-[#ffc2d6] transition-colors outline-none placeholder:text-gray-500 leading-normal text-base flex-1 min-w-0 pl-4 py-2 rounded-full bg-gray-200"
-                        />
-                        <button
-                            type="submit"
-                            disabled={inputText.trim().length === 0}
-                            className="cursor-pointer disabled:text-gray-500 text-brand-main1 text-base font-semibold shrink-0 whitespace-nowrap min-w-9"
-                        >
-                            검색
-                        </button>
-                    </header>
+                <FlexBox
+                    align="center"
+                    justify="between"
+                    as={'header'}
+                    gap="sm"
+                    className="w-full px-5 py-2.5 border-b-2 border-gray-200"
+                >
+                    <button onClick={onClose} type="button" className="cursor-pointer">
+                        <LeftArrowIcon className="h-5" />
+                    </button>
+                    <input
+                        ref={inputRef}
+                        type="search"
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        placeholder="지역명, 가게명 검색"
+                        className="border-2 border-transparent focus-within:border-[#ffc2d6] transition-colors outline-none placeholder:text-gray-500 leading-none text-base flex-1 min-w-0 pl-4 py-2 rounded-full bg-gray-200"
+                    />
+                    <button
+                        type="submit"
+                        disabled={inputText.trim().length === 0}
+                        className="cursor-pointer disabled:text-gray-500 text-brand-main1 text-base font-semibold shrink-0 whitespace-nowrap min-w-9"
+                    >
+                        검색
+                    </button>
                 </FlexBox>
             </form>
 
@@ -122,7 +121,6 @@ export default function SearchModal({ prevText, onClose }: SearchModalProps) {
                     sortedResults={sortedResults}
                     sortType={sortType}
                     onSortChange={setSortType}
-                    isLoggedIn={isLoggedIn}
                     hasSubmitted={submittedText.length > 0}
                 />
             </main>
@@ -135,7 +133,6 @@ interface SearchContentProps {
     sortedResults: StoreSearch[];
     sortType: SortType;
     onSortChange: (sort: SortType) => void;
-    isLoggedIn: boolean;
     hasSubmitted: boolean;
 }
 
@@ -145,10 +142,11 @@ function SearchContent({
     sortedResults,
     sortType,
     onSortChange,
-    isLoggedIn,
     // hasSubmitted,
 }: SearchContentProps) {
     const navigate = useNavigate();
+
+    const { isAuthenticated } = useAuth();
 
     if (isLoading) {
         return (
@@ -230,7 +228,7 @@ function SearchContent({
     }
 
     // 검색 전 초기 상태
-    if (!isLoggedIn) {
+    if (!isAuthenticated) {
         return (
             <>
                 <div className="w-full p-6 bg-brand-main1-light text-center">
