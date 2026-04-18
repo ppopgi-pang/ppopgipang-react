@@ -1,43 +1,49 @@
-import FilterModal from '@/components/common/modal/filter-modal';
-import CircularLoadingSpinner from '@/components/common/spinner/circular-loading-spinner';
+import { FilterModal, CircularLoadingSpinner, StoreRating } from '@/components/common';
 import { FlexBox } from '@/components/layout/flexbox';
-import StoreFilteringButton from '@/components/map/buttons/store-filtering-button';
-import MapBottomControls from '@/components/map/map-bottom-controls';
-import MapHeader from '@/components/map/map-header';
-import UserLocationMarker from '@/components/map/markers/user-location-marker';
-import QuestBox from '@/components/map/quest-box';
-import RefetchStoreButton from '@/components/map/refetch-stores-button';
-import SearchBarButton from '@/components/map/search-bar-button';
-import SearchModal from '@/components/map/search-modal';
-import StoreCardList from '@/components/map/store-card-list';
-import StoreMarkers from '@/components/map/store-markers';
+import {
+    StoreFilteringButton,
+    VisitCertificationButton,
+    MapBottomControls,
+    MapHeader,
+    UserLocationMarker,
+    QuestBox,
+    RefetchStoreButton,
+    SearchBarButton,
+    SearchModal,
+    StoreCardList,
+    StoreMarkers,
+} from '@/components/map';
 import { ZINDEX } from '@/constants/z-index';
 import useModal from '@/hooks/common/use-modal';
-import useGeolocation from '@/hooks/map/use-current-location';
 import { useMapBounds } from '@/hooks/map/use-map-bounds';
 import { useFetchStoresInBounds } from '@/hooks/queries/stores/use-fetch-stores';
-import { useCenterCoordinates, useIsBoundsChanged, useMapStore } from '@/stores/use-map-store';
+import { usePanTarget, useIsBoundsChanged, useMapStore } from '@/stores/use-map-store';
+import { useUserLocation } from '@/stores/use-user-location-store';
 import type { StoreInBounds } from '@/types/store/store.types';
 import { useEffect } from 'react';
 import { Map } from 'react-kakao-maps-sdk';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { BottomSheet } from '@/components/ui/BottomSheet';
-import VisitCertificationButton from '@/components/map/buttons/visit-certification-button';
-import StoreRating from '@/components/common/store-rating';
+import { useAuth } from '@/providers/auth-provider';
 
 export default function MapPage() {
     const navigate = useNavigate();
-    const { isLoading: loading, error, location: userLocation } = useGeolocation();
+    const { isAuthenticated } = useAuth();
+
+    // 사용자 위치
+    const { coordinates: userLocation, isLoading, error, fetchLocation } = useUserLocation();
+
     const { updateCurrentBounds, searchBounds, commitSearchBounds, initializeSearchBounds } = useMapBounds();
 
-    // 지도 관련 전역 상태
-    const centerCoordinates = useCenterCoordinates();
+    // 지도
+    const panTarget = usePanTarget(); // 지도 패닝 타겟
     const isBoundsChanged = useIsBoundsChanged();
-    const { setCenterCoordinates, setIsBoundsChanged, reset } = useMapStore();
+    const { setPanTarget, setIsBoundsChanged, reset } = useMapStore();
 
     // 맵 페이지 진입 시 이전 상태 초기화 (다른 페이지에서 돌아올 때 포함)
     useEffect(() => {
         reset();
+        fetchLocation(); // 위치 최초 조회 — Zustand 액션이므로 ESLint set-state-in-effect 미적용
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const { data, refetch } = useFetchStoresInBounds(searchBounds);
@@ -63,7 +69,8 @@ export default function MapPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchBounds]);
 
-    if (loading) {
+    // 최초 조회 중 — 좌표가 없으면 지도를 그릴 수 없으므로 블로킹
+    if (isLoading) {
         return (
             <div className="w-full h-full flex items-center justify-center">
                 <CircularLoadingSpinner />
@@ -81,7 +88,7 @@ export default function MapPage() {
 
             {/** 지도 */}
             <Map
-                center={centerCoordinates || userLocation}
+                center={panTarget || userLocation}
                 style={{ width: '100%', height: '100%', zIndex: ZINDEX.map }}
                 isPanto
                 level={3}
@@ -89,7 +96,7 @@ export default function MapPage() {
                 minLevel={15}
                 onDragEnd={(map) => {
                     const mapCenter = map.getCenter();
-                    setCenterCoordinates({ lat: mapCenter.getLat(), lng: mapCenter.getLng() });
+                    setPanTarget({ lat: mapCenter.getLat(), lng: mapCenter.getLng() });
                     setIsBoundsChanged(true);
                 }}
                 onZoomChanged={() => {
@@ -128,7 +135,7 @@ export default function MapPage() {
                 className="absolute top-0 left-1/2 -translate-x-1/2 w-full px-5 pt-[82px] flex flex-col items-center gap-4"
                 style={{ zIndex: ZINDEX.mapButton }}
             >
-                <QuestBox />
+                {isAuthenticated && <QuestBox />}
                 {isBoundsChanged && (
                     <RefetchStoreButton isVisible={isBoundsChanged} onRefetchStore={handleRefetchStore} />
                 )}
@@ -144,7 +151,6 @@ export default function MapPage() {
             >
                 <MapBottomControls
                     storeCount={data?.length ?? 0}
-                    userLocation={userLocation}
                     onRefetch={() => refetch()}
                     onOpenBottomSheet={openBottomSheet}
                 />
