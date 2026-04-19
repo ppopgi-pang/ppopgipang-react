@@ -13,9 +13,10 @@ export const certificationService = {
      * 가게 방문 인증 API
      */
     async checkIn(params: PostVisitCertificationRequest): Promise<PostVisitCertificationResponse> {
-        const { data } = await api.post<PostVisitCertificationResponse>(API_ENDPOINTS.CERTIFICATIONS.CHECK_IN(), {
-            data: params,
-        });
+        const { data } = await api.post<PostVisitCertificationResponse>(
+            API_ENDPOINTS.CERTIFICATIONS.CHECK_IN(),
+            params,
+        );
         return data;
     },
 } as const;

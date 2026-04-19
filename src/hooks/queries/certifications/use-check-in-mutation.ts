@@ -17,8 +17,8 @@ export default function useCheckInMutation({
             const response = await certificationService.checkIn({ store_id: storeId, latitude, longitude });
             return response;
         },
-        onSuccess: (data) => {
-            toast.success(`체크인 성공! 현재 방문 인증 횟수: ${data.certification_count}`);
+        onSuccess: () => {
+            toast.success('방문 인증이 완료되었습니다.');
         },
         onError: (error) => {
             if (error instanceof AxiosError) {

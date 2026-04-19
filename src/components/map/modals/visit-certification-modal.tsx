@@ -12,6 +12,7 @@ import { useAuth } from '@/providers/auth-provider';
 import useCheckInMutation from '@/hooks/queries/certifications/use-check-in-mutation';
 import CheckInSuccessModal from './check-in-success-modal';
 import { useState } from 'react';
+import type { PostVisitCertificationResponse } from '@/types/certification/certification.api.types';
 
 interface VisitCertificationModalProps {
     onClose: () => void;
@@ -28,9 +29,8 @@ export default function VisitCertificationModal({ onClose }: VisitCertificationM
     const { imageUrls } = useStoreImages(storeSummary?.image_names ?? [], { enabled: !!storeSummary });
     const { isAuthenticated } = useAuth();
 
-    // 성공 모달 표시 여부 — 백드롭 클릭으로 닫을 수 있음
-    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-    const [certifiedAt] = useState(() => new Date());
+    type ModalState = { type: 'closed' } | { type: 'checkInSuccess'; data: PostVisitCertificationResponse };
+    const [modal, setModal] = useState<ModalState>({ type: 'closed' });
 
     const { mutate: checkIn, isSuccess } = useCheckInMutation({
         storeId: Number(storeId),
@@ -44,7 +44,7 @@ export default function VisitCertificationModal({ onClose }: VisitCertificationM
             return;
         }
         checkIn(undefined, {
-            onSuccess: () => setIsSuccessModalOpen(true),
+            onSuccess: (data) => setModal({ type: 'checkInSuccess', data }),
         });
     };
 
@@ -103,11 +103,11 @@ export default function VisitCertificationModal({ onClose }: VisitCertificationM
                             </Button>
                         </FlexBox>
                     </FlexBox>
-                    {isSuccessModalOpen && (
+                    {modal.type === 'checkInSuccess' && (
                         <CheckInSuccessModal
-                            certificationCount={129}
-                            certifiedAt={certifiedAt}
-                            onClose={() => setIsSuccessModalOpen(false)}
+                            certificationCount={modal.data.certification_count}
+                            certifiedAt={new Date(modal.data.occurred_at)}
+                            onClose={() => setModal({ type: 'closed' })}
                         />
                     )}
                 </main>
