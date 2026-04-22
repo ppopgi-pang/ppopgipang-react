@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { UserInfo } from '@/types/user/user.types';
-import { useMe } from '@/queries/users/use-me';
+import { useMe } from '@/hooks/queries/users/use-me';
 import { QUERY_KEYS } from '@/constants/api';
 
 /** * 전역 인증 상태 (앱 전체에서 로그인 여부와 유저 정보를 관리)
@@ -41,13 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         [user, isLoading],
     );
 
-    return (
-        <AuthCtx.Provider
-            value={value}
-        >
-            {children}
-        </AuthCtx.Provider>
-    );
+    return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

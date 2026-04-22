@@ -5,8 +5,8 @@
  * left / center / right 슬롯 기반으로 구성하며,
  * forwardRef로 ref를 노출해 높이 측정(ResizeObserver)을 지원합니다.
  */
+import { cn } from '@/libs/common/cn';
 import { forwardRef, type ReactNode } from 'react';
-import { cn } from '@/lib/utils';
 
 export interface ScreenHeaderProps {
     /** 헤더 왼쪽 슬롯 (뒤로가기 버튼 등) */
@@ -42,14 +42,10 @@ const ScreenHeader = forwardRef<HTMLElement, ScreenHeaderProps>(
                 <div className="flex items-center shrink-0">{left}</div>
 
                 {/* 가운데 슬롯 — flex-1 로 남은 공간 차지 */}
-                {center !== undefined && (
-                    <div className="flex-1 flex items-center min-w-0">{center}</div>
-                )}
+                {center !== undefined && <div className="flex-1 flex items-center min-w-0">{center}</div>}
 
                 {/* 오른쪽 슬롯 */}
-                {right !== undefined && (
-                    <div className="flex items-center shrink-0">{right}</div>
-                )}
+                {right !== undefined && <div className="flex items-center shrink-0">{right}</div>}
             </header>
         );
     },

@@ -4,8 +4,8 @@ import { BottomSheetHeader } from './BottomSheetHeader';
 import { BottomSheetHandle } from './BottomSheetHandle';
 import { useBottomSheet } from './useBottomSheet';
 import type { BottomSheetProps } from './types';
-import { cn } from '@/lib/utils';
 import { ZINDEX } from '@/constants/z-index';
+import { cn } from '@/libs/common/cn';
 
 export function BottomSheet({ isOpen, onClose, title, children, halfRatio }: BottomSheetProps) {
     const { sheetRef, currentSnap, snapTo, dragHandleProps } = useBottomSheet({
